@@ -1,0 +1,45 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body .normalGameDiv .table {
+  width: 100%;
+  outline: solid 1px;
+  padding-top: 100px;
+  padding-left: 30px;
+  padding-bottom: 100px;
+  background-color: #313335;
+}
+body .normalGameDiv .table .tableLine {
+  height: 30px;
+  margin-bottom: 5px;
+}
+body .normalGameDiv .table .tableLine .block {
+  outline: solid 1px #6f7f7f;
+  width: 30px;
+  height: 30px;
+  margin-left: 5px;
+  float: left;
+  transition: all 0.2s;
+}
+body .normalGameDiv .table .tableLine .block:hover {
+  transform: scale(1.15);
+  cursor: pointer;
+}
+body .normalGameDiv .table .tableLine .air {
+  background-color: #323232;
+}
+body .normalGameDiv .table .tableLine .black {
+  background-color: #d47777;
+  border-radius: 50%;
+}
+body .normalGameDiv .table .tableLine .white {
+  background-color: #85df8a;
+  border-radius: 50%;
+}
+body .normalGameDiv .table .tableLine .red {
+  background-color: #8595df;
+  border-radius: 50%;
+}
+/*# sourceMappingURL=index.css.map */
