@@ -15,7 +15,7 @@ class NormalGame {
         this.optionEle = optionEle;
         this.bindTableEle = ele.querySelector(".table");
         this.arr = [];
-        this._initBoard();
+
         /**
          * 轮流轮
          * @type {number[]}
@@ -33,6 +33,7 @@ class NormalGame {
         this.colorList = []
         this._initPlayer();
         this.turnIndex = 0;
+        this._initBoard();
         this._initFunction();
     }
 
@@ -333,6 +334,8 @@ class NormalGame {
 
         // // 更新上次放置
         // this.lastPut[this.turnIndex] = putPoint;
+        // todo 自己不能塞到自己的眼睛里
+
         // 迭代轮
         this.turnIndex++;
         this.turnIndex %= this.turnList.length;
@@ -343,6 +346,11 @@ class NormalGame {
      * 渲染
      */
     rend() {
+        // 先更新鼠标放上去的颜色
+        console.log(this.colorList);
+        $(".normalStyle").innerText = `.air:hover {outline-color: ${this.colorList[this.turnIndex]} !important;outline-width:3px !important}`;
+
+
         this.bindTableEle.innerHTML = "";
         for (let y = 0; y < this.height; y++) {
             let lineDiv = div("tableLine");
@@ -358,6 +366,7 @@ class NormalGame {
                     block.classList.add("wall");
                 }
                 if (n === GameObject.air) {
+                    block.classList.add("air");
                     // 添加点击事件
                     block.addEventListener("click", () => {
                         this.putBlock(x, y);
