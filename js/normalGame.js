@@ -37,23 +37,27 @@ class NormalGame {
     }
 
     _initFunction() {
+        let randomStep = () => {
+            let airList = [];                 // 收集所有的空气方块
+            for (let y = 0; y < this.height; y++)
+                for (let x = 0; x < this.width; x++)
+                    if (this._get(new Point(x, y)) === GameObject.air)
+                        airList.push(new Point(x, y));
+            if (airList.length === 0)
+                return;
+            let p = airList.choiceOne();
+            this.putBlock(p.x, p.y);
+            this.rend();
+        }
         $(".autoPlayRandom100").onclick = () => {
             for (let i = 0; i < 100; i++) {
-                // 收集所有的空气方块
-                let airList = [];
-                for (let y = 0; y < this.height; y++) {
-                    for (let x = 0; x < this.width; x++) {
-                        if (this._get(new Point(x, y)) === GameObject.air) {
-                            airList.push(new Point(x, y));
-                        }
-                    }
-                }
-                if (airList.length === 0) {
-                    break;
-                }
-                let p = airList.choiceOne();
-                this.putBlock(p.x, p.y);
-                this.rend();
+                randomStep();
+            }
+        }
+        $(".autoPlayRandom10").onclick = () => {
+            for (let i = 0; i < 10; i++) {
+
+                randomStep();
             }
         }
     }
@@ -232,10 +236,10 @@ class NormalGame {
             // 当前这个点不是障碍物，也不是空气
             let q = [rootPoint];
             let visitedBody = new PointSet();
+            visitedBody.add(rootPoint); // 添加访问
             let gasSet = new PointSet();
             while (q.length) {
                 let p = q.shift();  // 队列出
-                visitedBody.add(p); // 添加访问
                 // 遍历当前的周围四个
                 for (let roundP of p.getRound4()) {
                     if (roundP.isInSquireBoard(this.width, this.height)) {
@@ -246,6 +250,7 @@ class NormalGame {
                         if (this._get(roundP) === n && visitedBody.notHave(roundP)) {
                             // 当前这个是自己还没访问过的身体
                             q.push(roundP);
+                            visitedBody.add(roundP);
                         }
                     }
                 }
