@@ -15,7 +15,7 @@ class NormalGame {
         this.optionEle = optionEle;
         this.bindTableEle = ele.querySelector(".table");
         this.arr = [];
-        this._boardInit();
+        this._initBoard();
         /**
          * 轮流轮
          * @type {number[]}
@@ -33,6 +33,114 @@ class NormalGame {
         this.colorList = []
         this._initPlayer();
         this.turnIndex = 0;
+    }
+
+    // 初始化
+    _initBoard() {
+        // 构建二维数组，全是空气
+        for (let y = 0; y < this.height; y++) {
+            let line = [];
+            for (let x = 0; x < this.width; x++) {
+                line.push(GameObject.air);
+            }
+            this.arr.push(line);
+        }
+        console.log("地形：");
+        let selectEle = $(".hinderMode");
+        let modeName = selectEle.options[selectEle.selectedIndex].value;
+        let stoneRate = (+$(".stoneRate").value) / 100;
+
+        // 1/3 的点
+        let Lh2 = Math.floor(this.height / 2);
+        let Lw2 = Math.floor(this.width / 2);
+        // 1/3 的点
+        let Lh3 = Math.floor(this.height / 3);
+        let Lw3 = Math.floor(this.width / 3);
+        // 1/4 点
+        let Lh4 = Math.floor(this.height / 4);
+        let Lw4 = Math.floor(this.width / 4);
+        let setWall = (x, y) => {
+            if (new Point(x, y).isInSquireBoard(this.width, this.height)) {
+                this.arr[y][x] = GameObject.wall;
+            }
+        }
+        let setWallLine = (p1, p2) => {
+            setWall(p1.x, p1.y);
+            if (p1.x === p2.x && p1.y === p2.y) {
+                setWall(p1.x, p1.y);
+            } else {
+                let step;
+                if (Math.abs(p2.x - p1.x) >= Math.abs(p2.y - p1.y)) {
+                    step = Math.abs(p2.x - p1.x);
+                } else {
+                    step = Math.abs(p2.y - p1.y);
+                }
+                for (let i = 0; i < step; i++) {
+                    let x = Math.round(p1.x + (p2.x - p1.x) / step * (i + 1))
+                    let y = Math.round(p1.y + (p2.y - p1.y) / step * (i + 1));
+                    setWall(x, y);
+                }
+            }
+        }
+        switch (modeName) {
+            case "传统":
+
+                break;
+            case "随机碎石地":
+                for (let y = 0; y < this.height; y++)
+                    for (let x = 0; x < this.width; x++)
+                        if (Math.random() < stoneRate)
+                            setWall(x, y);
+                break;
+            case "中凸高原":
+                for (let y = Lh3; y < Lh3 * 2; y++)
+                    for (let x = Lw3; x < Lw3 * 2; x++)
+                        setWall(x, y);
+                break;
+            case "中框":
+                for (let y = Lh3; y < Lh3 * 2; y++) {
+                    setWall(Lw3, y);
+                    setWall(Lw3 * 2, y);
+                }
+                for (let x = Lw3; x < Lw3 * 2; x++) {
+                    setWall(x, Lh3);
+                    setWall(x, Lh3 * 2);
+                }
+
+                break;
+            case "角落消失":
+                for (let dy = 0; dy < Lh4; dy++) {
+                    for (let dx = 0; dx < Lw4; dx++) {
+                        setWall(dx, dy);
+                        setWall(this.width - 1 - dx, dy);
+                        setWall(dx, this.height - 1 - dy);
+                        setWall(this.width - 1 - dx, this.height - 1 - dy);
+                    }
+                }
+                break;
+            case "九宫格分裂世界":
+                for (let y = 0; y < this.height; y++) {
+                    setWall(Lw3, y);
+                    setWall(Lw3 * 2, y);
+                }
+                for (let x = 0; x < this.width; x++) {
+                    setWall(x, Lh3);
+                    setWall(x, Lh3 * 2);
+                }
+                break;
+            case "田字格分裂世界":
+                for (let y = 0; y < this.height; y++)
+                    setWall(Lw2, y);
+                for (let x = 0; x < this.width; x++)
+                    setWall(x, Lh2);
+                break;
+            case "X分裂世界":
+                setWallLine(new Point(0, 0), new Point(this.width - 1, this.height - 1));
+                setWallLine(new Point(this.width - 1, 0), new Point(0, this.height - 1));
+                break;
+
+        }
+        this.rend();
     }
 
     _initPlayer() {
@@ -212,13 +320,15 @@ class NormalGame {
             for (let x = 0; x < this.width; x++) {
                 let block = div(`block`);
                 let n = this._get(new Point(x, y));
+
                 if (GameObject.isPlayer(n)) {
                     block.classList.add("playerBlock");
                     block.style.backgroundColor = this.colorList[n - GameObject.BasePlayerNumber];
                 }
-
-                if (this.arr[y][x] === GameObject.air) {
-
+                if (n === GameObject.wall) {
+                    block.classList.add("wall");
+                }
+                if (n === GameObject.air) {
                     // 添加点击事件
                     block.addEventListener("click", () => {
                         this.putBlock(x, y);
@@ -231,16 +341,5 @@ class NormalGame {
         }
     }
 
-    // 初始化
-    _boardInit() {
-        for (let y = 0; y < this.height; y++) {
-            let line = [];
-            for (let x = 0; x < this.width; x++) {
-                line.push(GameObject.air);
-            }
-            this.arr.push(line);
-        }
-        // rend
-        this.rend();
-    }
+
 }

@@ -32,7 +32,6 @@ body {
           height: @L;
           margin-left: @M;
           float: left;
-
           transition: all 0.2s;
 
           &:hover {
@@ -43,10 +42,27 @@ body {
 
         .air {
           background-color: #323232;
+
+
         }
+
+        .wall {
+          background-color: transparent;
+          border-radius: 20%;
+          outline: none;
+
+          &:hover {
+            cursor: not-allowed;
+          }
+        }
+
 
         .playerBlock {
           border-radius: 50%;
+
+          &:hover {
+            cursor: auto;
+          }
         }
       }
 

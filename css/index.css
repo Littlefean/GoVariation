@@ -33,7 +33,18 @@ body .normalGameDiv .table .tableLine .block:hover {
 body .normalGameDiv .table .tableLine .air {
   background-color: #323232;
 }
+body .normalGameDiv .table .tableLine .wall {
+  background-color: transparent;
+  border-radius: 20%;
+  outline: none;
+}
+body .normalGameDiv .table .tableLine .wall:hover {
+  cursor: not-allowed;
+}
 body .normalGameDiv .table .tableLine .playerBlock {
   border-radius: 50%;
+}
+body .normalGameDiv .table .tableLine .playerBlock:hover {
+  cursor: auto;
 }
 /*# sourceMappingURL=index.css.map */
