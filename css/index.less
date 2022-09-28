@@ -25,43 +25,67 @@ body {
         height: @L;
         margin-bottom: @M;
         //outline: solid 1px;
-
-        .block {
-          outline: solid 1px #6f7f7f;
+        .tableBox {
+          outline: solid 1px #505a5a;
           width: @L;
           height: @L;
           margin-left: @M;
           float: left;
           transition: all 0.2s;
+          position: relative;
 
-          &:hover {
-            transform: scale(1.15);
-            cursor: pointer;
+          .block {
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+
+            &:hover {
+              //transform: scale(1.15);
+              cursor: pointer;
+            }
+          }
+          // 死亡特效
+          .shrink {
+            position: absolute;
+            width: @L;
+            height: @L;
+            left: 0;
+            top: 0;
+            border-radius: 50%;
+
+            z-index: 1;
+            animation-name: blockBoom;
+            //animation-duration: 1s; // in js
+            animation-fill-mode: forwards;
+
+          }
+
+          .air {
+            background-color: #323232;
+          }
+
+
+          .wall {
+            background-color: transparent;
+            border-radius: 20%;
+            outline: none;
+
+            &:hover {
+              cursor: not-allowed;
+            }
+          }
+
+
+          .playerBlock {
+            border-radius: 50%;
+
+            &:hover {
+              cursor: auto;
+            }
           }
         }
 
-        .air {
-          background-color: #323232;
-        }
 
-        .wall {
-          background-color: transparent;
-          border-radius: 20%;
-          outline: none;
-
-          &:hover {
-            cursor: not-allowed;
-          }
-        }
-
-
-        .playerBlock {
-          border-radius: 50%;
-
-          &:hover {
-            cursor: auto;
-          }
-        }
       }
 
     }

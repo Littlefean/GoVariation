@@ -40,6 +40,10 @@ class Point {
         return new Point(x, y);
     }
 
+    distance(p) {
+        return ((this.x - p.x) ** 2 + (this.y - p.y) ** 2) ** 0.5
+    }
+
     // 返回一个特殊实例
     static NegOne() {
         return new Point(-1, -1);
@@ -58,9 +62,11 @@ class PointSet {
     have(point) {
         return this.s.has(point.hashCode());
     }
+
     clear() {
         this.s.clear();
     }
+
     notHave(point) {
         return !this.have(point);
     }

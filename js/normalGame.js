@@ -167,6 +167,8 @@ class NormalGame {
                 break;
 
         }
+        // 初始化前端显示
+        this._initTableEle();
         this.rend();
     }
 
@@ -317,6 +319,23 @@ class NormalGame {
         }
         // 处理提子效果
         for (let deadPoint of attackArr) {
+
+            // 添加一点小动画
+            let delay = deadPoint.distance(putPoint) - 1;
+            let dur = 2000;
+            let box = this.bindTableEle.children[deadPoint.y].children[deadPoint.x];
+            console.log("boom")
+            let b = div("shrink");
+            console.log(this._get(deadPoint));
+            console.log(this.colorList[this._get(deadPoint) - GameObject.BasePlayerNumber]);
+            b.style.backgroundColor = this.colorList[this._get(deadPoint) - GameObject.BasePlayerNumber];
+            b.style.animationDuration = `${dur}ms`
+            box.appendChild(b);
+
+            setTimeout(() => {
+                box.removeChild(b);
+            }, dur);
+            // 改为空气
             this._set(deadPoint, GameObject.air);
         }
 
@@ -342,40 +361,56 @@ class NormalGame {
 
     }
 
-    /**
-     * 渲染
-     */
-    rend() {
-        // 先更新鼠标放上去的颜色
-        console.log(this.colorList);
-        $(".normalStyle").innerText = `.air:hover {outline-color: ${this.colorList[this.turnIndex]} !important;outline-width:3px !important}`;
-
-
+    _initTableEle() {
+        // todo
+        $(".normalStyle").innerText = `.tableBox:hover {outline-color: ${this.colorList[this.turnIndex]} !important;outline-width:3px !important}`;
         this.bindTableEle.innerHTML = "";
         for (let y = 0; y < this.height; y++) {
             let lineDiv = div("tableLine");
             for (let x = 0; x < this.width; x++) {
-                let block = div(`block`);
-                let n = this._get(new Point(x, y));
-
-                if (GameObject.isPlayer(n)) {
-                    block.classList.add("playerBlock");
-                    block.style.backgroundColor = this.colorList[n - GameObject.BasePlayerNumber];
-                }
-                if (n === GameObject.wall) {
-                    block.classList.add("wall");
-                }
-                if (n === GameObject.air) {
-                    block.classList.add("air");
-                    // 添加点击事件
-                    block.addEventListener("click", () => {
-                        this.putBlock(x, y);
-                        this.rend();
-                    })
-                }
-                lineDiv.appendChild(block);
+                let tableBox = div(`tableBox`);
+                tableBox.appendChild(this._createBlock(new Point(x, y)));
+                lineDiv.appendChild(tableBox);
             }
             this.bindTableEle.appendChild(lineDiv);
+        }
+    }
+
+    _createBlock(point) {
+        let block = div(`block`);
+        let n = this._get(point);
+
+        if (GameObject.isPlayer(n)) {
+            block.classList.add("playerBlock");
+            block.style.backgroundColor = this.colorList[n - GameObject.BasePlayerNumber];
+        }
+        if (n === GameObject.wall) {
+            block.classList.add("wall");
+        }
+        if (n === GameObject.air) {
+            block.classList.add("air");
+            // 添加点击事件
+            block.addEventListener("click", () => {
+                this.putBlock(point.x, point.y);
+                this.rend();
+            })
+        }
+        return block;
+    }
+
+    /**
+     * 刷新渲染
+     */
+    rend() {
+        // 先更新鼠标放上去的颜色
+        $(".normalStyle").innerText = `.tableBox:hover {outline-color: ${this.colorList[this.turnIndex]} !important;outline-width:3px !important}`;
+
+        for (let y = 0; y < this.height; y++) {
+            for (let x = 0; x < this.width; x++) {
+                let tableBox = this.bindTableEle.children[y].children[x];
+                tableBox.removeChild(tableBox.querySelector(".block"));
+                tableBox.appendChild(this._createBlock(new Point(x, y)));
+            }
         }
     }
 
