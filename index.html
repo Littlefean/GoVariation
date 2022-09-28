@@ -9,14 +9,51 @@
     <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
-<h1>Variations of Go</h1>
-<button class="normal">normal</button>
-<div class="normalGameDiv">
+<h1>围棋大变种</h1>
+<button class="normal">正方形网络</button>
+<div class="normalOption" style="display: none">
+    棋盘宽度：
+    <label>
+        <input type="number" class="width" value="19">
+    </label>
+    棋盘高度：
+    <label>
+        <input type="number" class="height" value="19">
+    </label>
+    玩家数量：
+    <input type="number" value="2" min="2" class="playerNumber">
+    玩家颜色设定：
+    <span class="userColorList">
+        <input type="color" value="#d47777">
+        <input type="color" value="#85df8a">
+    </span>
+    地形模式：
+    <select name="hinderMode">
+        <option value="volvo">传统</option>
+        <option value="volvo">随机碎石地</option>
+        <option value="volvo">中凸高原</option>
+        <option value="volvo">中框</option>
+        <option value="volvo">角落消失</option>
+        <option value="volvo">九宫格分裂世界</option>
+        <option value="volvo">九宫格迷宫世界</option>
+        <option value="volvo">田字格分裂世界</option>
+        <option value="volvo">X分裂世界</option>
+    </select>
+    碎石出现概率
+    <input type="range" max="100" min="0" value="0">
+    <button class="play">开始游戏</button>
+</div>
+
+<div class="normalGameDiv" style="display: none">
 
     <div class="table"></div>
 </div>
-<button class="triangle">triangle</button>
+
+<button class="triangle">三角形</button>
+<button class="triangle">六边形</button>
 </body>
+
+
 <script src="js/tools.js"></script>
 <script src="js/Point.js"></script>
 <script src="js/gameObject.js"></script>

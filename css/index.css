@@ -3,6 +3,9 @@
   padding: 0;
   box-sizing: border-box;
 }
+body h1 {
+  text-align: center;
+}
 body .normalGameDiv .table {
   width: 100%;
   outline: solid 1px;
@@ -30,16 +33,7 @@ body .normalGameDiv .table .tableLine .block:hover {
 body .normalGameDiv .table .tableLine .air {
   background-color: #323232;
 }
-body .normalGameDiv .table .tableLine .black {
-  background-color: #d47777;
-  border-radius: 50%;
-}
-body .normalGameDiv .table .tableLine .white {
-  background-color: #85df8a;
-  border-radius: 50%;
-}
-body .normalGameDiv .table .tableLine .red {
-  background-color: #8595df;
+body .normalGameDiv .table .tableLine .playerBlock {
   border-radius: 50%;
 }
 /*# sourceMappingURL=index.css.map */

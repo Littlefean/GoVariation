@@ -5,29 +5,44 @@
 class NormalGame {
     /**
      *
-     * @param w 棋盘宽度
-     * @param h 棋盘高度
      * @param ele 界面div
      * 界面div中有一个table子div用来存储棋盘
+     * @param optionEle 设置界面信息
      */
-    constructor(w, h, ele) {
-        this.width = w;
-        this.height = h;
-        this.bindEle = ele;
+    constructor(ele, optionEle) {
+        this.width = +optionEle.querySelector(".width").value;
+        this.height = +optionEle.querySelector(".height").value;
+        this.optionEle = optionEle;
         this.bindTableEle = ele.querySelector(".table");
         this.arr = [];
         this._boardInit();
         /**
-         *
+         * 轮流轮
          * @type {number[]}
          */
-        this.turnList = [GameObject.black, GameObject.white, GameObject.red];  // 轮流轮
+        this.turnList = [];
         /**
-         *
+         * 每个玩家上一次被吃掉的子的集合
          * @type {PointSet[]}
          */
-        this.lastEatenSet = [new PointSet(), new PointSet(), new PointSet()]; // 每个玩家上一次被吃掉的子的集合
+        this.lastEatenSet = [];
+        /**
+         * 每个玩家对应的颜色
+         * @type {string[]}
+         */
+        this.colorList = []
+        this._initPlayer();
         this.turnIndex = 0;
+    }
+
+    _initPlayer() {
+        let playerNumber = +$(".playerNumber").value;
+        let userColorList = $(".userColorList");
+        for (let i = 0; i < playerNumber; i++) {
+            this.turnList.push(i + GameObject.BasePlayerNumber);
+            this.lastEatenSet.push(new PointSet());
+            this.colorList.push(userColorList.children[i].value)
+        }
     }
 
     /**
@@ -83,7 +98,7 @@ class NormalGame {
     // 检测一个位置上的棋子，BFS，这一块棋有多少口气
     _gasCount(rootPoint) {
         let n = this._get(rootPoint);
-        if (GameObject.Players.includes(n)) {
+        if (GameObject.isPlayer(n)) {
             // 当前这个点不是障碍物，也不是空气
             let q = [rootPoint];
             let visitedBody = new PointSet();
@@ -116,19 +131,17 @@ class NormalGame {
         // 此函数被触发的时候是某一个玩家下了棋了之后
         // 当前下棋的玩家是 turIndex指向的玩家
         let nowUser = this.turnList[this.turnIndex];
-        // alert(1)
         // 这个下的位置是不是只有一个空气，为了打劫检测用
         let isOne = this._getGroupSet(putPoint).size() === 1;
 
         this.arr[y][x] = nowUser;  // 先拟放置
-        // alert(111)
         // 是否触发了攻击效果
         let attackFlag = false;
         let attackArr = [];
         for (let p of this._getRound(x, y)) {
             let n = this._get(p);
             // 邻接的四个棋子中有 玩家棋子 并且这个棋子不是自己
-            if (GameObject.Players.includes(n) && n !== nowUser) {
+            if (GameObject.isPlayer(n) && n !== nowUser) {
                 // 从这个棋子开始BFS检测是不是死了
                 if (this._gasCount(p) === 0) {
                     // 死了
@@ -198,7 +211,11 @@ class NormalGame {
             let lineDiv = div("tableLine");
             for (let x = 0; x < this.width; x++) {
                 let block = div(`block`);
-                block.classList.add(GameObject.eval(this.arr[y][x]));
+                let n = this._get(new Point(x, y));
+                if (GameObject.isPlayer(n)) {
+                    block.classList.add("playerBlock");
+                    block.style.backgroundColor = this.colorList[n - GameObject.BasePlayerNumber];
+                }
 
                 if (this.arr[y][x] === GameObject.air) {
 
