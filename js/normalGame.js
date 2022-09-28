@@ -33,6 +33,29 @@ class NormalGame {
         this.colorList = []
         this._initPlayer();
         this.turnIndex = 0;
+        this._initFunction();
+    }
+
+    _initFunction() {
+        $(".autoPlayRandom100").onclick = () => {
+            for (let i = 0; i < 100; i++) {
+                // 收集所有的空气方块
+                let airList = [];
+                for (let y = 0; y < this.height; y++) {
+                    for (let x = 0; x < this.width; x++) {
+                        if (this._get(new Point(x, y)) === GameObject.air) {
+                            airList.push(new Point(x, y));
+                        }
+                    }
+                }
+                if (airList.length === 0) {
+                    break;
+                }
+                let p = airList.choiceOne();
+                this.putBlock(p.x, p.y);
+                this.rend();
+            }
+        }
     }
 
     // 初始化
@@ -45,7 +68,6 @@ class NormalGame {
             }
             this.arr.push(line);
         }
-        console.log("地形：");
         let selectEle = $(".hinderMode");
         let modeName = selectEle.options[selectEle.selectedIndex].value;
         let stoneRate = (+$(".stoneRate").value) / 100;
@@ -174,7 +196,7 @@ class NormalGame {
 
     _set(p, obj) {
         if (obj === undefined) {
-            console.log("不能设置棋盘上一个位置为undefined");
+            console.warn("不能设置棋盘上一个位置为undefined");
         } else {
             this.arr[p.y][p.x] = obj;
         }
@@ -234,6 +256,11 @@ class NormalGame {
         }
     }
 
+    /**
+     * 世界进行一场迭代，内部数据发生改变，但是没有渲染界面
+     * @param x
+     * @param y
+     */
     putBlock(x, y) {
         let putPoint = new Point(x, y);
         // 此函数被触发的时候是某一个玩家下了棋了之后
@@ -258,12 +285,9 @@ class NormalGame {
                 }
             }
         }
-        console.log(attackFlag);
 
         // 这个位置由于打劫的原因，不能立刻下载这里
         // 原因是：
-        console.log(attackFlag, this.lastEatenSet[this.turnIndex].have(putPoint), isOne);
-        console.log(this.lastEatenSet);
         if (
             attackFlag  // 这个位置下了之后立刻能吃掉对方子
             && this.lastEatenSet[this.turnIndex].have(putPoint)  // 这个位置上一次被吃掉过
@@ -271,7 +295,7 @@ class NormalGame {
         ) {
             // 撤销放置
             this._set(putPoint, GameObject.air);
-            console.log("由于打劫不能放置");
+            console.warn("由于打劫不能放置");
             return;
         }
 
@@ -297,7 +321,7 @@ class NormalGame {
             if (this._gasCount(putPoint) === 0) {
                 this._set(putPoint, GameObject.air);
                 // 不能放置！！
-                console.log("不能触发攻击，且会导致自杀");
+                console.warn("不能触发攻击，且会导致自杀");
                 return;
             }
         }

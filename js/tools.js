@@ -3,9 +3,16 @@
  * by littlefean
  */
 function $(queryStr) {
+    if (document.querySelector(queryStr) === null) {
+        console.log("选择器没有找到");
+    }
     return document.querySelector(queryStr);
 }
 
+Array.prototype.choiceOne = function () {
+    let r = Math.floor(Math.random() * this.length);
+    return this[r];
+}
 
 function div(classNameString, content = "",) {
 
