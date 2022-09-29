@@ -324,16 +324,41 @@ class NormalGame {
             let delay = deadPoint.distance(putPoint) - 1;
             let dur = 2000;
             let box = this.bindTableEle.children[deadPoint.y].children[deadPoint.x];
-            console.log("boom")
-            let b = div("shrink");
-            console.log(this._get(deadPoint));
-            console.log(this.colorList[this._get(deadPoint) - GameObject.BasePlayerNumber]);
-            b.style.backgroundColor = this.colorList[this._get(deadPoint) - GameObject.BasePlayerNumber];
-            b.style.animationDuration = `${dur}ms`
-            box.appendChild(b);
+            let shrinkEle = div("shrink");
+            let colorStr = this.colorList[this._get(deadPoint) - GameObject.BasePlayerNumber]
+            shrinkEle.style.backgroundColor = colorStr;
+            shrinkEle.style.animationDuration = `${dur}ms`
+            box.appendChild(shrinkEle);
 
+            // 崩裂特效
+            for (let i = 0; i < 10; i++) {
+                let littleStone = div("littleStone");
+                littleStone.style.backgroundColor = colorStr;
+                let L = Math.random() * 5 + 1;
+                littleStone.style.width = `${L}px`;
+                littleStone.style.height = `${L}px`;
+                littleStone.style.marginLeft = `${-L / 2}px`;
+                littleStone.style.marginTop = `${-L / 2}px`;
+                littleStone.style.transition = `all ${dur}ms`;
+                littleStone.style.transform = `translateX(0) translateY(0)`;
+                box.appendChild(littleStone);
+
+
+            }
+
+            // 缩小结束
             setTimeout(() => {
-                box.removeChild(b);
+                box.removeChild(shrinkEle);
+                // 添加崩裂效果
+                let dur = 1000;
+                let dis = 1000;  // 最远距离
+                for (let littleStone of box.querySelectorAll(".littleStone")) {
+                    littleStone.style.transform = `translateX(${(Math.random() * 2 - 1) * dis}px) translateY(${(Math.random() * 2 - 1) * dis}px)`;
+                    setTimeout(() => {
+                        // 删除特效
+                        box.removeChild(littleStone);
+                    }, dur);
+                }
             }, dur);
             // 改为空气
             this._set(deadPoint, GameObject.air);
@@ -351,9 +376,47 @@ class NormalGame {
             }
         }
 
-        // // 更新上次放置
-        // this.lastPut[this.turnIndex] = putPoint;
-        // todo 自己不能塞到自己的眼睛里
+        // 添加放置特效
+        {
+            let dur = 200;
+            let box = this.bindTableEle.children[putPoint.y].children[putPoint.x];
+            let fxEle = div("putFx");
+            fxEle.style.backgroundColor = this.colorList[this.turnIndex];
+            fxEle.style.animationDuration = `${dur}ms`
+            box.appendChild(fxEle);
+
+
+            // 删除特效
+            setTimeout(() => {
+                box.removeChild(fxEle);
+
+                // 棋盘振动特效
+                this.bindTableEle.classList.add("boardShakeFx");
+                let shakeDur = 300;
+                this.bindTableEle.style.animationDuration = `${shakeDur}ms`;
+
+                setTimeout(() => {
+                    this.bindTableEle.classList.remove("boardShakeFx");
+                }, shakeDur)
+
+                // 周围的棋子像波浪一样振动
+                for (let y = 0; y < this.height; y++) {
+                    for (let x = 0; x < this.width; x++) {
+                        let dis = new Point(x, y).distance(putPoint);
+                        setTimeout(() => {
+                            // 延迟添加特效
+                            let dur = 500;
+                            let tableBox = this.bindTableEle.children[y].children[x];
+                            tableBox.style.animationDuration = `${dur}ms`;
+                            tableBox.classList.add("tableBoxShakeFx");
+                            setTimeout(() => {
+                                tableBox.classList.remove("tableBoxShakeFx")
+                            }, dur);
+                        }, dis * 100);
+                    }
+                }
+            }, dur);
+        }
 
         // 迭代轮
         this.turnIndex++;

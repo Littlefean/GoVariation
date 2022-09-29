@@ -5,11 +5,18 @@
 }
 
 body {
+  overflow-x: hidden;
+
   h1 {
     text-align: center;
   }
 
   .normalGameDiv {
+    .boardShakeFx {
+      animation-name: littleShake;
+      animation-fill-mode: forwards;
+    }
+
     .table {
       //height: 100px;
       width: 100%;
@@ -25,6 +32,12 @@ body {
         height: @L;
         margin-bottom: @M;
         //outline: solid 1px;
+
+        .tableBoxShakeFx {
+          animation-name: small;
+          animation-fill-mode: forwards;
+        }
+
         .tableBox {
           outline: solid 1px #505a5a;
           width: @L;
@@ -44,6 +57,18 @@ body {
               cursor: pointer;
             }
           }
+
+          .littleStone {
+            // 小碎石子
+            position: absolute;
+            border-radius: 50%;
+            left: 50%;
+            top: 50%;
+            //outline: solid 3px red;
+            z-index: 1;
+            transition-timing-function: ease-out;
+          }
+
           // 死亡特效
           .shrink {
             position: absolute;
@@ -53,15 +78,28 @@ body {
             top: 0;
             border-radius: 50%;
 
-            z-index: 1;
+            z-index: 2;
             animation-name: blockBoom;
-            //animation-duration: 1s; // in js
             animation-fill-mode: forwards;
 
           }
 
+          .putFx {
+            position: absolute;
+            width: @L;
+            height: @L;
+            left: 0;
+            top: 0;
+            border-radius: 50%;
+
+            animation-name: putFx;
+            animation-fill-mode: forwards;
+            animation-timing-function: ease-in-out;
+          }
+
+
           .air {
-            background-color: #323232;
+            //background-color: #323232;
           }
 
 

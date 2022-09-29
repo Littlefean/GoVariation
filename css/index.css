@@ -3,8 +3,15 @@
   padding: 0;
   box-sizing: border-box;
 }
+body {
+  overflow-x: hidden;
+}
 body h1 {
   text-align: center;
+}
+body .normalGameDiv .boardShakeFx {
+  animation-name: littleShake;
+  animation-fill-mode: forwards;
 }
 body .normalGameDiv .table {
   width: 100%;
@@ -17,6 +24,10 @@ body .normalGameDiv .table {
 body .normalGameDiv .table .tableLine {
   height: 30px;
   margin-bottom: 5px;
+}
+body .normalGameDiv .table .tableLine .tableBoxShakeFx {
+  animation-name: small;
+  animation-fill-mode: forwards;
 }
 body .normalGameDiv .table .tableLine .tableBox {
   outline: solid 1px #505a5a;
@@ -35,6 +46,14 @@ body .normalGameDiv .table .tableLine .tableBox .block {
 body .normalGameDiv .table .tableLine .tableBox .block:hover {
   cursor: pointer;
 }
+body .normalGameDiv .table .tableLine .tableBox .littleStone {
+  position: absolute;
+  border-radius: 50%;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  transition-timing-function: ease-out;
+}
 body .normalGameDiv .table .tableLine .tableBox .shrink {
   position: absolute;
   width: 30px;
@@ -42,12 +61,20 @@ body .normalGameDiv .table .tableLine .tableBox .shrink {
   left: 0;
   top: 0;
   border-radius: 50%;
-  z-index: 1;
+  z-index: 2;
   animation-name: blockBoom;
   animation-fill-mode: forwards;
 }
-body .normalGameDiv .table .tableLine .tableBox .air {
-  background-color: #323232;
+body .normalGameDiv .table .tableLine .tableBox .putFx {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  left: 0;
+  top: 0;
+  border-radius: 50%;
+  animation-name: putFx;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
 }
 body .normalGameDiv .table .tableLine .tableBox .wall {
   background-color: transparent;
