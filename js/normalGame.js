@@ -217,6 +217,30 @@ class NormalGame {
         return this.arr[p.y][p.x];
     }
 
+    /**
+     *
+     * @param p {Point}
+     * @return {Element}
+     * @private
+     */
+    _getBox(p) {
+        if (p === undefined) {
+            console.log("传入坐标点是undef")
+        }
+        if (p === null) {
+            console.log("传入坐标点是null")
+        }
+        if (typeof p !== "object") {
+            console.log(p, "不是obj")
+        }
+
+        if (p.isInSquireBoard(this.width, this.height)) {
+            return this.bindTableEle.children[p.y].children[p.x];
+        } else {
+            console.log("访问box越界了");
+        }
+    }
+
     _set(p, obj) {
         if (obj === undefined) {
             console.warn("不能设置棋盘上一个位置为undefined");
@@ -304,9 +328,9 @@ class NormalGame {
                 console.log("有火石被困住了")
                 fireEle.style.animationName = "bigShake";
             }
-            this.bindTableEle.children[p1.y].children[p1.x].appendChild(fireEle);
+            this._getBox(p1).appendChild(fireEle);
             setTimeout(() => {
-                this.bindTableEle.children[p1.y].children[p1.x].removeChild(fireEle);
+                this._getBox(p1).removeChild(fireEle);
             }, NormalGame.fireStoneMoveMs);
         };
         let moveEndLoc = new PointSet(); // 存放已经移动过的火石的位置
@@ -332,7 +356,21 @@ class NormalGame {
                         this._set(moveLoc, GameObject.fireStone);
                         addFireMoveFx(p, moveLoc);
                         moveEndLoc.add(moveLoc);  // 移动过集合
-                        // todo 判断是否构成吃子
+
+                        let deadList = [];
+                        for (let r of this._getRound(moveLoc.x, moveLoc.y)) {
+                            if (GameObject.isPlayer(this._get(r))) {
+                                // 检测这个玩家是否死了
+                                if (this._gasCount(r) === 0) {
+                                    // 被火石挤死了
+                                    console.log(r, "这个位置的玩家被挤死了")
+                                    deadList = deadList.concat(this._getGroupSet(r).toArray());
+                                    console.log(deadList);
+                                    // 立刻处理掉
+                                    this.dead(deadList);
+                                }
+                            }
+                        }
 
                     } else {
                         // 火石被困住了
@@ -342,6 +380,59 @@ class NormalGame {
             }
         }
         this.rend();
+    }
+
+    /**
+     * 处理提子效果
+     * @param attackArr {Point[]}
+     */
+    dead(attackArr) {
+        // 遍历每一个要死的位置
+        for (let deadPoint of attackArr) {
+
+            // 添加一点小动画
+            let dur = 2000;
+            console.log(deadPoint, "dp")
+            let box = this._getBox(deadPoint);
+            let shrinkEle = div("shrink");
+            let colorStr = this.colorList[this._get(deadPoint) - GameObject.BasePlayerNumber]
+            shrinkEle.style.backgroundColor = colorStr;
+            shrinkEle.style.animationDuration = `${dur}ms`
+            box.appendChild(shrinkEle);
+
+            // 崩裂特效
+            for (let i = 0; i < 10; i++) {
+                let littleStone = div("littleStone");
+                littleStone.style.backgroundColor = colorStr;
+                let L = Math.random() * 5 + 1;
+                littleStone.style.width = `${L}px`;
+                littleStone.style.height = `${L}px`;
+                littleStone.style.marginLeft = `${-L / 2}px`;
+                littleStone.style.marginTop = `${-L / 2}px`;
+                littleStone.style.transition = `all ${dur}ms`;
+                littleStone.style.transform = `translateX(0) translateY(0)`;
+                box.appendChild(littleStone);
+
+
+            }
+
+            // 缩小结束
+            setTimeout(() => {
+                box.removeChild(shrinkEle);
+                // 添加崩裂效果
+                let dur = 1000;
+                let dis = 1000;  // 最远距离
+                for (let littleStone of box.querySelectorAll(".littleStone")) {
+                    littleStone.style.transform = `translateX(${(Math.random() * 2 - 1) * dis}px) translateY(${(Math.random() * 2 - 1) * dis}px)`;
+                    setTimeout(() => {
+                        // 删除特效
+                        box.removeChild(littleStone);
+                    }, dur);
+                }
+            }, dur);
+            // 改为空气
+            this._set(deadPoint, GameObject.air);
+        }
     }
 
     /**
@@ -399,50 +490,7 @@ class NormalGame {
             }
         }
         // 处理提子效果
-        for (let deadPoint of attackArr) {
-
-            // 添加一点小动画
-            let dur = 2000;
-            let box = this.bindTableEle.children[deadPoint.y].children[deadPoint.x];
-            let shrinkEle = div("shrink");
-            let colorStr = this.colorList[this._get(deadPoint) - GameObject.BasePlayerNumber]
-            shrinkEle.style.backgroundColor = colorStr;
-            shrinkEle.style.animationDuration = `${dur}ms`
-            box.appendChild(shrinkEle);
-
-            // 崩裂特效
-            for (let i = 0; i < 10; i++) {
-                let littleStone = div("littleStone");
-                littleStone.style.backgroundColor = colorStr;
-                let L = Math.random() * 5 + 1;
-                littleStone.style.width = `${L}px`;
-                littleStone.style.height = `${L}px`;
-                littleStone.style.marginLeft = `${-L / 2}px`;
-                littleStone.style.marginTop = `${-L / 2}px`;
-                littleStone.style.transition = `all ${dur}ms`;
-                littleStone.style.transform = `translateX(0) translateY(0)`;
-                box.appendChild(littleStone);
-
-
-            }
-
-            // 缩小结束
-            setTimeout(() => {
-                box.removeChild(shrinkEle);
-                // 添加崩裂效果
-                let dur = 1000;
-                let dis = 1000;  // 最远距离
-                for (let littleStone of box.querySelectorAll(".littleStone")) {
-                    littleStone.style.transform = `translateX(${(Math.random() * 2 - 1) * dis}px) translateY(${(Math.random() * 2 - 1) * dis}px)`;
-                    setTimeout(() => {
-                        // 删除特效
-                        box.removeChild(littleStone);
-                    }, dur);
-                }
-            }, dur);
-            // 改为空气
-            this._set(deadPoint, GameObject.air);
-        }
+        this.dead(attackArr);
 
         // 没有触发攻击效果
         if (!attackFlag) {
@@ -459,7 +507,7 @@ class NormalGame {
         // 添加放置特效
         {
             let dur = 200;
-            let box = this.bindTableEle.children[putPoint.y].children[putPoint.x];
+            let box = this._getBox(putPoint);
             let fxEle = div("putFx");
             fxEle.style.backgroundColor = this.colorList[this.turnIndex];
             fxEle.style.animationDuration = `${dur}ms`
@@ -483,11 +531,12 @@ class NormalGame {
                 if (attackFlag) {
                     for (let y = 0; y < this.height; y++) {
                         for (let x = 0; x < this.width; x++) {
+                            let p = new Point(x, y);
                             let dis = new Point(x, y).distance(putPoint);
                             setTimeout(() => {
                                 // 延迟添加特效
                                 let dur = 500;
-                                let tableBox = this.bindTableEle.children[y].children[x];
+                                let tableBox = this._getBox(p);
                                 tableBox.style.animationDuration = `${dur}ms`;
                                 tableBox.classList.add("tableBoxShakeFx");
                                 setTimeout(() => {
@@ -558,9 +607,10 @@ class NormalGame {
 
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
-                let tableBox = this.bindTableEle.children[y].children[x];
+                let p = new Point(x, y);
+                let tableBox = this._getBox(p);
                 tableBox.removeChild(tableBox.querySelector(".block"));
-                tableBox.appendChild(this._createBlock(new Point(x, y)));
+                tableBox.appendChild(this._createBlock(p));
             }
         }
     }

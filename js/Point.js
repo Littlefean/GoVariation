@@ -49,6 +49,8 @@ class Point {
         return new Point(-1, -1);
     }
 }
+let pp = new Point(1, 1);
+console.log(typeof pp);
 
 class PointSet {
     constructor() {
