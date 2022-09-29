@@ -1,6 +1,8 @@
 class GameObject {
     static air = 0;
     static wall = 1;
+    static fireStone = -1;
+    // 上面和css同名
 
     static BasePlayerNumber = 2;  // 从2开始以上都是玩家
     static isPlayer(n) {

@@ -3,6 +3,9 @@
  * by littlefean
  */
 class NormalGame {
+    // 火石移动时间
+    static fireStoneMoveMs = 1000;
+
     /**
      *
      * @param ele 界面div
@@ -76,6 +79,7 @@ class NormalGame {
         let selectEle = $(".hinderMode");
         let modeName = selectEle.options[selectEle.selectedIndex].value;
         let stoneRate = (+$(".stoneRate").value) / 100;
+        let firestoneRate = (+$(".firestoneRate").value) / 100;
 
         // 1/3 的点
         let Lh2 = Math.floor(this.height / 2);
@@ -89,6 +93,11 @@ class NormalGame {
         let setWall = (x, y) => {
             if (new Point(x, y).isInSquireBoard(this.width, this.height)) {
                 this.arr[y][x] = GameObject.wall;
+            }
+        }
+        let setFireStone = (x, y) => {
+            if (new Point(x, y).isInSquireBoard(this.width, this.height)) {
+                this.arr[y][x] = GameObject.fireStone;
             }
         }
         let setWallLine = (p1, p2) => {
@@ -118,6 +127,12 @@ class NormalGame {
                     for (let x = 0; x < this.width; x++)
                         if (Math.random() < stoneRate)
                             setWall(x, y);
+                break;
+            case "随机火石地":
+                for (let y = 0; y < this.height; y++)
+                    for (let x = 0; x < this.width; x++)
+                        if (Math.random() < firestoneRate)
+                            setFireStone(x, y);
                 break;
             case "中凸高原":
                 for (let y = Lh3; y < Lh3 * 2; y++)
@@ -166,6 +181,7 @@ class NormalGame {
                 setWallLine(new Point(this.width - 1, 0), new Point(0, this.height - 1));
                 break;
 
+
         }
         // 初始化前端显示
         this._initTableEle();
@@ -183,7 +199,7 @@ class NormalGame {
     }
 
     /**
-     * 获取周围四个位置
+     * 获取周围四个位置 返回一个数组
      * @private
      */
     _getRound(x, y) {
@@ -265,11 +281,70 @@ class NormalGame {
     }
 
     /**
+     * 世界其他生物运行活动
+     * 火石移动
+     */
+    otherMotion() {
+        // 火石移动特效
+        let addFireMoveFx = (p1, p2) => {
+            let dx = p2.x - p1.x;
+            let dy = p2.y - p1.y;
+            let fireEle = div("fireStoneMoveFx");
+            fireEle.style.animationDuration = `${NormalGame.fireStoneMoveMs}ms`;
+            if (dx === 1) {
+                fireEle.style.animationName = "fireStoneRight";
+            } else if (dx === -1) {
+                fireEle.style.animationName = "fireStoneLeft";
+            } else if (dy === 1) {
+                fireEle.style.animationName = "fireStoneDown";
+            } else if (dy === -1) {
+                fireEle.style.animationName = "fireStoneTop";
+            }
+            this.bindTableEle.children[p1.y].children[p1.x].appendChild(fireEle);
+            setTimeout(() => {
+                this.bindTableEle.children[p1.y].children[p1.x].removeChild(fireEle);
+            }, NormalGame.fireStoneMoveMs);
+        };
+        let moveEndLoc = new PointSet(); // 存放已经移动过的火石的位置
+
+        for (let y = 0; y < this.height; y++) {
+            for (let x = 0; x < this.width; x++) {
+                let p = new Point(x, y);
+                if (this._get(p) === GameObject.fireStone) {
+                    if (moveEndLoc.have(p)) {
+                        continue;
+                    }
+                    // 当前位置是一个火石，开始随机移动
+                    let roundAirList = [];
+                    for (let round of this._getRound(x, y)) {
+                        if (this._get(round) === GameObject.air) {
+                            roundAirList.push(round);
+                        }
+                    }
+                    if (roundAirList.length !== 0) {
+                        let moveLoc = roundAirList.choiceOne();
+                        // 处理移动
+                        this._set(p, GameObject.air);
+                        this._set(moveLoc, GameObject.fireStone);
+                        addFireMoveFx(p, moveLoc);
+                        moveEndLoc.add(moveLoc);  // 移动过集合
+                        console.log(p, moveLoc)
+                        // 判断是否构成吃子
+
+                    }
+                }
+            }
+        }
+        this.rend();
+    }
+
+    /**
      * 世界进行一场迭代，内部数据发生改变，但是没有渲染界面
      * @param x
      * @param y
      */
     putBlock(x, y) {
+
         let putPoint = new Point(x, y);
         // 此函数被触发的时候是某一个玩家下了棋了之后
         // 当前下棋的玩家是 turIndex指向的玩家
@@ -321,19 +396,43 @@ class NormalGame {
         for (let deadPoint of attackArr) {
 
             // 添加一点小动画
-            let delay = deadPoint.distance(putPoint) - 1;
             let dur = 2000;
             let box = this.bindTableEle.children[deadPoint.y].children[deadPoint.x];
-            console.log("boom")
-            let b = div("shrink");
-            console.log(this._get(deadPoint));
-            console.log(this.colorList[this._get(deadPoint) - GameObject.BasePlayerNumber]);
-            b.style.backgroundColor = this.colorList[this._get(deadPoint) - GameObject.BasePlayerNumber];
-            b.style.animationDuration = `${dur}ms`
-            box.appendChild(b);
+            let shrinkEle = div("shrink");
+            let colorStr = this.colorList[this._get(deadPoint) - GameObject.BasePlayerNumber]
+            shrinkEle.style.backgroundColor = colorStr;
+            shrinkEle.style.animationDuration = `${dur}ms`
+            box.appendChild(shrinkEle);
 
+            // 崩裂特效
+            for (let i = 0; i < 10; i++) {
+                let littleStone = div("littleStone");
+                littleStone.style.backgroundColor = colorStr;
+                let L = Math.random() * 5 + 1;
+                littleStone.style.width = `${L}px`;
+                littleStone.style.height = `${L}px`;
+                littleStone.style.marginLeft = `${-L / 2}px`;
+                littleStone.style.marginTop = `${-L / 2}px`;
+                littleStone.style.transition = `all ${dur}ms`;
+                littleStone.style.transform = `translateX(0) translateY(0)`;
+                box.appendChild(littleStone);
+
+
+            }
+
+            // 缩小结束
             setTimeout(() => {
-                box.removeChild(b);
+                box.removeChild(shrinkEle);
+                // 添加崩裂效果
+                let dur = 1000;
+                let dis = 1000;  // 最远距离
+                for (let littleStone of box.querySelectorAll(".littleStone")) {
+                    littleStone.style.transform = `translateX(${(Math.random() * 2 - 1) * dis}px) translateY(${(Math.random() * 2 - 1) * dis}px)`;
+                    setTimeout(() => {
+                        // 删除特效
+                        box.removeChild(littleStone);
+                    }, dur);
+                }
             }, dur);
             // 改为空气
             this._set(deadPoint, GameObject.air);
@@ -351,18 +450,56 @@ class NormalGame {
             }
         }
 
-        // // 更新上次放置
-        // this.lastPut[this.turnIndex] = putPoint;
-        // todo 自己不能塞到自己的眼睛里
+        // 添加放置特效
+        {
+            let dur = 200;
+            let box = this.bindTableEle.children[putPoint.y].children[putPoint.x];
+            let fxEle = div("putFx");
+            fxEle.style.backgroundColor = this.colorList[this.turnIndex];
+            fxEle.style.animationDuration = `${dur}ms`
+            box.appendChild(fxEle);
+
+
+            // 删除特效
+            setTimeout(() => {
+                box.removeChild(fxEle);
+
+                // 棋盘振动特效
+                this.bindTableEle.classList.add("boardShakeFx");
+                let shakeDur = 300;
+                this.bindTableEle.style.animationDuration = `${shakeDur}ms`;
+
+                setTimeout(() => {
+                    this.bindTableEle.classList.remove("boardShakeFx");
+                }, shakeDur)
+
+                // 周围的棋子像波浪一样振动
+                for (let y = 0; y < this.height; y++) {
+                    for (let x = 0; x < this.width; x++) {
+                        let dis = new Point(x, y).distance(putPoint);
+                        setTimeout(() => {
+                            // 延迟添加特效
+                            let dur = 500;
+                            let tableBox = this.bindTableEle.children[y].children[x];
+                            tableBox.style.animationDuration = `${dur}ms`;
+                            tableBox.classList.add("tableBoxShakeFx");
+                            setTimeout(() => {
+                                tableBox.classList.remove("tableBoxShakeFx")
+                            }, dur);
+                        }, dis * 100);
+                    }
+                }
+            }, dur);
+        }
 
         // 迭代轮
         this.turnIndex++;
         this.turnIndex %= this.turnList.length;
-
+        // 其他运动
+        this.otherMotion();
     }
 
     _initTableEle() {
-        // todo
         $(".normalStyle").innerText = `.tableBox:hover {outline-color: ${this.colorList[this.turnIndex]} !important;outline-width:3px !important}`;
         this.bindTableEle.innerHTML = "";
         for (let y = 0; y < this.height; y++) {
@@ -383,12 +520,17 @@ class NormalGame {
         if (GameObject.isPlayer(n)) {
             block.classList.add("playerBlock");
             block.style.backgroundColor = this.colorList[n - GameObject.BasePlayerNumber];
+        } else {
+            block.classList.add(GameObject.eval(n));
         }
-        if (n === GameObject.wall) {
-            block.classList.add("wall");
+        if (n === GameObject.fireStone) {
+            // 隔一个移动时间再显示
+            block.style.display = "none";
+            setTimeout(() => {
+                block.style.display = "block";
+            }, NormalGame.fireStoneMoveMs);
         }
         if (n === GameObject.air) {
-            block.classList.add("air");
             // 添加点击事件
             block.addEventListener("click", () => {
                 this.putBlock(point.x, point.y);

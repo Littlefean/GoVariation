@@ -12,7 +12,6 @@
     transform: scale(0);
   }
 }
-
 @keyframes small {
   0% {
     transform: scale(1);
@@ -24,7 +23,6 @@
     transform: scale(1);
   }
 }
-
 @keyframes putFx {
   0% {
     transform: scale(3);
@@ -35,20 +33,17 @@
     opacity: 1;
   }
 }
-
 @keyframes littleShake {
-  @s: 2px;
   0% {
     transform: translateX(0px) translateY(0px);
   }
   50% {
-    transform: translateX(@s) translateY(@s);
+    transform: translateX(2px) translateY(2px);
   }
   100% {
     transform: translateX(0px) translateY(0px);
   }
 }
-
 @keyframes fireFlame {
   0% {
     filter: blur(0);
@@ -60,64 +55,56 @@
     filter: blur(0);
   }
 }
-
-@L: 30px;
-@m: 5px;
 @keyframes fireStoneLeft {
   from {
     transform: translateX(0);
   }
   to {
-    transform: translateX(-(@L+@m));
+    transform: translateX(-35px);
   }
 }
-
 @keyframes fireStoneRight {
   from {
     transform: translateX(0);
   }
   to {
-    transform: translateX((@L+@m));
+    transform: translateX(35px);
   }
 }
-
 @keyframes fireStoneTop {
   from {
     transform: translateY(0);
   }
   to {
-    transform: translateY(-(@L+@m));
+    transform: translateY(-35px);
   }
 }
-
 @keyframes fireStoneDown {
   from {
     transform: translateY(0);
   }
   to {
-    transform: translateY((@L+@m));
+    transform: translateY(35px);
   }
 }
-
 @keyframes bigShake {
-  @s: 1px;
-  @S: 2px;
   0% {
     transform: translateX(0px) translateY(0px);
   }
   20% {
-    transform: translateX(@s) translateY(@s);
+    transform: translateX(1px) translateY(1px);
   }
   40% {
-    transform: translateX(-@S) translateY(-@S);
+    transform: translateX(-2px) translateY(-2px);
   }
   60% {
-    transform: translateX(@S) translateY(@S);
+    transform: translateX(2px) translateY(2px);
   }
   80% {
-    transform: translateX(-@s) translateY(-@s);
+    transform: translateX(-1px) translateY(-1px);
   }
   100% {
     transform: translateX(0px) translateY(0px);
   }
 }
+/*# sourceMappingURL=animation.css.map */
