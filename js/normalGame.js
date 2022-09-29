@@ -328,7 +328,6 @@ class NormalGame {
                         this._set(moveLoc, GameObject.fireStone);
                         addFireMoveFx(p, moveLoc);
                         moveEndLoc.add(moveLoc);  // 移动过集合
-                        console.log(p, moveLoc)
                         // 判断是否构成吃子
 
                     }
@@ -474,21 +473,24 @@ class NormalGame {
                 }, shakeDur)
 
                 // 周围的棋子像波浪一样振动
-                for (let y = 0; y < this.height; y++) {
-                    for (let x = 0; x < this.width; x++) {
-                        let dis = new Point(x, y).distance(putPoint);
-                        setTimeout(() => {
-                            // 延迟添加特效
-                            let dur = 500;
-                            let tableBox = this.bindTableEle.children[y].children[x];
-                            tableBox.style.animationDuration = `${dur}ms`;
-                            tableBox.classList.add("tableBoxShakeFx");
+                if (attackFlag) {
+                    for (let y = 0; y < this.height; y++) {
+                        for (let x = 0; x < this.width; x++) {
+                            let dis = new Point(x, y).distance(putPoint);
                             setTimeout(() => {
-                                tableBox.classList.remove("tableBoxShakeFx")
-                            }, dur);
-                        }, dis * 100);
+                                // 延迟添加特效
+                                let dur = 500;
+                                let tableBox = this.bindTableEle.children[y].children[x];
+                                tableBox.style.animationDuration = `${dur}ms`;
+                                tableBox.classList.add("tableBoxShakeFx");
+                                setTimeout(() => {
+                                    tableBox.classList.remove("tableBoxShakeFx")
+                                }, dur);
+                            }, dis * 100);
+                        }
                     }
                 }
+
             }, dur);
         }
 
