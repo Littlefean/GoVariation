@@ -299,6 +299,10 @@ class NormalGame {
                 fireEle.style.animationName = "fireStoneDown";
             } else if (dy === -1) {
                 fireEle.style.animationName = "fireStoneTop";
+            } else {
+                // 火石被困住了
+                console.log("有火石被困住了")
+                fireEle.style.animationName = "bigShake";
             }
             this.bindTableEle.children[p1.y].children[p1.x].appendChild(fireEle);
             setTimeout(() => {
@@ -328,8 +332,11 @@ class NormalGame {
                         this._set(moveLoc, GameObject.fireStone);
                         addFireMoveFx(p, moveLoc);
                         moveEndLoc.add(moveLoc);  // 移动过集合
-                        // 判断是否构成吃子
+                        // todo 判断是否构成吃子
 
+                    } else {
+                        // 火石被困住了
+                        addFireMoveFx(p, p);
                     }
                 }
             }
