@@ -1,8 +1,9 @@
 /**
- * 正常的围棋
+ * 方格子的围棋
  * by littlefean
  */
 class NormalGame {
+
     // 火石移动时间
     static fireStoneMoveMs = 1000;
 
@@ -15,7 +16,6 @@ class NormalGame {
     constructor(ele, optionEle) {
         this.width = +optionEle.querySelector(".width").value;
         this.height = +optionEle.querySelector(".height").value;
-        this.optionEle = optionEle;
         this.bindTableEle = ele.querySelector(".table");
         this.arr = [];
 
@@ -40,6 +40,10 @@ class NormalGame {
         this._initFunction();
     }
 
+    /**
+     * 初始化一些功能：随机下棋按钮绑定事件。
+     * @private
+     */
     _initFunction() {
         let randomStep = () => {
             let airList = [];                 // 收集所有的空气方块
@@ -66,7 +70,11 @@ class NormalGame {
         }
     }
 
-    // 初始化
+    /**
+     * 根据设定初始化棋盘数据内容
+     * 在结束时候会调用一次渲染。
+     * @private
+     */
     _initBoard() {
         // 构建二维数组，全是空气
         for (let y = 0; y < this.height; y++) {
@@ -188,6 +196,10 @@ class NormalGame {
         this.rend();
     }
 
+    /**
+     * 初始化玩家颜色信息、上一轮被吃掉的位置数组信息
+     * @private
+     */
     _initPlayer() {
         let playerNumber = +$(".playerNumber").value;
         let userColorList = $(".userColorList");
@@ -213,12 +225,18 @@ class NormalGame {
         return res;
     }
 
+    /**
+     * 获取数据棋盘上一个坐标位置是什么
+     * @param p {Point} 传入的是坐标点类型
+     * @return {Number} 返回的是数字
+     * @private
+     */
     _get(p) {
         return this.arr[p.y][p.x];
     }
 
     /**
-     *
+     * 获取棋盘p位置上的小容器格子div。
      * @param p {Point}
      * @return {Element}
      * @private
@@ -241,6 +259,12 @@ class NormalGame {
         }
     }
 
+    /**
+     * 设定数据棋盘中的物品
+     * @param p 设定的位置的坐标
+     * @param obj {Number}
+     * @private
+     */
     _set(p, obj) {
         if (obj === undefined) {
             console.warn("不能设置棋盘上一个位置为undefined");
@@ -249,7 +273,12 @@ class NormalGame {
         }
     }
 
-    // 从一个点开始获取一连串相同颜色形成的集合
+    /**
+     * 从一个点开始获取一连串相同颜色形成的集合
+     * @param rootPoint
+     * @return {PointSet}
+     * @private
+     */
     _getGroupSet(rootPoint) {
         let n = this._get(rootPoint);
         let q = [rootPoint];
@@ -272,7 +301,12 @@ class NormalGame {
         return visitedBody;
     }
 
-    // 检测一个位置上的棋子，BFS，这一块棋有多少口气
+    /**
+     * 检测一个位置上的棋子，BFS，这一块棋有多少口气
+     * @param rootPoint
+     * @return {number}
+     * @private
+     */
     _gasCount(rootPoint) {
         let n = this._get(rootPoint);
         if (GameObject.isPlayer(n)) {
@@ -557,6 +591,10 @@ class NormalGame {
         this.otherMotion();
     }
 
+    /**
+     * 初始化棋盘界面div
+     * @private
+     */
     _initTableEle() {
         $(".normalStyle").innerText = `.tableBox:hover {outline-color: ${this.colorList[this.turnIndex]} !important;outline-width:3px !important}`;
         this.bindTableEle.innerHTML = "";
@@ -571,6 +609,12 @@ class NormalGame {
         }
     }
 
+    /**
+     * 根据数据棋盘的某一个位置，创建一个div并返回，用于渲染函数
+     * @param point
+     * @return {HTMLDivElement}
+     * @private
+     */
     _createBlock(point) {
         let block = div(`block`);
         let n = this._get(point);

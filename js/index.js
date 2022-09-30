@@ -1,5 +1,5 @@
 /**
- *
+ * 主界面运行 main 方法
  * by littlefean
  */
 window.onload = function () {

@@ -1,13 +1,22 @@
 /**
- *
- * by littlefean
+ * 坐标点类
+ * 用来表示二维数组中的坐标点
  */
 class Point {
+    /**
+     * 坐标点构造方法
+     * @param x {Number}
+     * @param y {Number}
+     */
     constructor(x, y) {
         this.x = x;
         this.y = y;
     }
 
+    /**
+     * 获取一个坐标的周围四个点，以数组形式返回
+     * @return {Point[]}
+     */
     getRound4() {
         return [
             new Point(this.x + 1, this.y),
@@ -30,28 +39,49 @@ class Point {
         return (0 <= this.x && this.x < width) && (0 <= this.y && this.y < height);
     }
 
+    /**
+     * 转化成唯一的int值。用于点集类解析用。
+     * @return {*}
+     */
     hashCode() {
         return 100_0000 * this.x + this.y;
     }
 
+    /**
+     * 用于点集类解析用
+     * @param b
+     * @return {Point}
+     */
     static evalHashCode(b) {
         let x = Math.floor(b / 100_0000);
         let y = b % 100_0000;
         return new Point(x, y);
     }
 
+    /**
+     * 返回两个点之间的直线距离
+     * @param p
+     * @return {number}
+     */
     distance(p) {
         return ((this.x - p.x) ** 2 + (this.y - p.y) ** 2) ** 0.5
     }
 
-    // 返回一个特殊实例
+    /**
+     * 返回一个特殊实例
+     * @return {Point}
+     * @constructor
+     */
     static NegOne() {
         return new Point(-1, -1);
     }
 }
-let pp = new Point(1, 1);
-console.log(typeof pp);
 
+
+/**
+ * 点集合
+ * 封装了js原生的set。
+ */
 class PointSet {
     constructor() {
         this.s = new Set();

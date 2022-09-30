@@ -1,5 +1,5 @@
 /**
- *
+ * 一些辅助小函数
  * by littlefean
  */
 function $(queryStr) {
@@ -9,11 +9,21 @@ function $(queryStr) {
     return document.querySelector(queryStr);
 }
 
+/**
+ * 在数组中随机选择一个元素并返回
+ * @return {*}
+ */
 Array.prototype.choiceOne = function () {
     let r = Math.floor(Math.random() * this.length);
     return this[r];
 }
 
+/**
+ * 创建一个div
+ * @param classNameString
+ * @param content
+ * @return {HTMLDivElement}
+ */
 function div(classNameString, content = "",) {
 
     let res = document.createElement("div");
