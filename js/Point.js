@@ -39,6 +39,10 @@ class Point {
         return (0 <= this.x && this.x < width) && (0 <= this.y && this.y < height);
     }
 
+    outOfBoard(width, height) {
+        return !((0 <= this.x && this.x < width) && (0 <= this.y && this.y < height));
+    }
+
     /**
      * 转化成唯一的int值。用于点集类解析用。
      * @return {*}
@@ -74,6 +78,22 @@ class Point {
      */
     static NegOne() {
         return new Point(-1, -1);
+    }
+
+    up() {
+        return new Point(this.x, this.y - 1);
+    }
+
+    down() {
+        return new Point(this.x, this.y + 1);
+    }
+
+    left() {
+        return new Point(this.x - 1, this.y);
+    }
+
+    right() {
+        return new Point(this.x + 1, this.y);
     }
 }
 

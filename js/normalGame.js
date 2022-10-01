@@ -614,8 +614,6 @@ class NormalGame {
                 let tableBox = div(`tableBox`);
 
 
-
-
                 /// 创建背景图片
                 let bgEle = div("bz");
 
@@ -677,6 +675,29 @@ class NormalGame {
         if (GameObject.isPlayer(n)) {
             block.classList.add("playerBlock");
             block.style.backgroundColor = this.colorList[n - GameObject.BasePlayerNumber];
+            // 连接生动效果
+            let up = point.up();
+            let down = point.down();
+            let left = point.left();
+            let right = point.right();
+
+
+            if (up.outOfBoard(this.width, this.height) || this._get(up) === n) {
+                block.style.borderTopLeftRadius = "0";
+                block.style.borderTopRightRadius = "0";
+            }
+            if (down.outOfBoard(this.width, this.height) || this._get(down) === n) {
+                block.style.borderBottomLeftRadius = "0";
+                block.style.borderBottomRightRadius = "0";
+            }
+            if (left.outOfBoard(this.width, this.height) || this._get(left) === n) {
+                block.style.borderBottomLeftRadius = "0";
+                block.style.borderTopLeftRadius = "0";
+            }
+            if (right.outOfBoard(this.width, this.height) || this._get(right) === n) {
+                block.style.borderBottomRightRadius = "0";
+                block.style.borderTopRightRadius = "0";
+            }
         } else {
             block.classList.add(GameObject.eval(n));
         }
@@ -697,9 +718,6 @@ class NormalGame {
             block.addEventListener("mouseenter", () => {
                 block.style.outlineColor = `${this.colorList[this.turnIndex]}`;
             });
-            // block.addEventListener("mouseleave", () => {
-            //     block.classList.remove("tableBoxHover");
-            // })
         }
         return block;
     }
