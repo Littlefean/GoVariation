@@ -1,4 +1,4 @@
-# 围棋变种
+# 围棋变种 
 
 ---
 
@@ -33,6 +33,52 @@ js文件结构：GameObject数字枚举棋盘上的物品种类，就是各种�
 棋盘数据会用二维数组保存 `int[][]`
 
 
+
+*下面是英文翻译，给外国人看的*
+
+# Variations of Go
+
+---
+
+## Project introduction
+
+
+This project is an experiment of innovative design of Go. At present, it is still in the testing stage and can only be played locally on your own computer.
+
+## Experience method
+
+
+Download the project to the local (computer side) and open ` index Html ` file
+
+## Implemented
+
+
+Each player has different colors in a chess game.
+
+
+Chessboard size customization: it can be set into rectangle and strip shape. Or very large shapes.
+
+
+The chessboard contains an obstacle: "stone".
+
+
+The chessboard contains movable obstacles: "flint".
+
+## To be realized
+
+
+Regular triangle grid chessboard
+
+
+Hexagonal grid chessboard
+
+## Project Structure
+
+
+Js file structure: GameObject numerically enumerates the types of items on the chessboard, including chessmen, air, walls (stones), flints, etc. of various colors.
+
+
+Chessboard data will be saved in two-dimensional array ` int [] []`
 
 
 
