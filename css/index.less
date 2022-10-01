@@ -24,9 +24,11 @@ body {
       padding-top: 100px;
       padding-left: 30px;
       padding-bottom: 100px;
+
       @L: 30px;
-      @M: 5px;
-      background-color: #313335;
+      //@M: 5px;
+      @M: 0;
+      background-color: #d3a969;
 
       .tableLine {
         height: @L;
@@ -38,8 +40,15 @@ body {
           animation-fill-mode: forwards;
         }
 
+        .tableBoxHover {
+          outline-width: 3px;
+          z-index: 4;
+          transform: scale(1.5);
+
+        }
+
         .tableBox {
-          outline: solid 1px #505a5a;
+          //outline: solid 1px red;
           width: @L;
           height: @L;
           margin-left: @M;
@@ -47,16 +56,40 @@ body {
           transition: all 0.2s;
           position: relative;
 
+
           .block {
             width: 100%;
             height: 100%;
-            z-index: 2;
+            z-index: 3;
+            position: absolute;
+            left: 0;
+            top: 0;
+            transition: outline-color 0.5s;
+            outline-width: 3px;
+            outline-color: transparent;
 
             &:hover {
-              //transform: scale(1.15);
               cursor: pointer;
+              outline-style: solid;
             }
           }
+
+          .bz {
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            //background-image: url("../img/normal.png");
+            background-size: contain;
+
+            &:hover {
+              filter: blur(5px);
+            }
+          }
+
 
           .littleStone {
             // 小碎石子
@@ -79,7 +112,7 @@ body {
             top: 0;
             border-radius: 50%;
 
-            z-index: 2;
+            z-index: 100;
             animation-name: blockBoom;
             animation-fill-mode: forwards;
 

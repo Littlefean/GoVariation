@@ -60,7 +60,7 @@
     transform: translateX(0);
   }
   to {
-    transform: translateX(-35px);
+    transform: translateX(-30px);
   }
 }
 @keyframes fireStoneRight {
@@ -68,7 +68,7 @@
     transform: translateX(0);
   }
   to {
-    transform: translateX(35px);
+    transform: translateX(30px);
   }
 }
 @keyframes fireStoneTop {
@@ -76,7 +76,7 @@
     transform: translateY(0);
   }
   to {
-    transform: translateY(-35px);
+    transform: translateY(-30px);
   }
 }
 @keyframes fireStoneDown {
@@ -84,7 +84,7 @@
     transform: translateY(0);
   }
   to {
-    transform: translateY(35px);
+    transform: translateY(30px);
   }
 }
 @keyframes bigShake {

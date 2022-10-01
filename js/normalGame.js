@@ -40,6 +40,15 @@ class NormalGame {
         this._initFunction();
     }
 
+    _getHoverCss() {
+        return `.tableBox:hover {
+            outline-color: ${this.colorList[this.turnIndex]} !important;
+            outline-width: 3px !important;
+            z-index: 4;
+            
+        }`;
+    }
+
     /**
      * 初始化一些功能：随机下棋按钮绑定事件。
      * @private
@@ -596,13 +605,59 @@ class NormalGame {
      * @private
      */
     _initTableEle() {
-        $(".normalStyle").innerText = `.tableBox:hover {outline-color: ${this.colorList[this.turnIndex]} !important;outline-width:3px !important}`;
+        // $(".normalStyle").innerText = this._getHoverCss();
+
         this.bindTableEle.innerHTML = "";
         for (let y = 0; y < this.height; y++) {
             let lineDiv = div("tableLine");
             for (let x = 0; x < this.width; x++) {
                 let tableBox = div(`tableBox`);
-                tableBox.appendChild(this._createBlock(new Point(x, y)));
+
+
+
+
+                /// 创建背景图片
+                let bgEle = div("bz");
+
+
+                let name = "";
+
+                if (x === 0) {
+                    if (y === 0) {
+                        name = "left-top";
+                    } else if (y === this.height - 1) {
+                        name = "left-bottom";
+                    } else {
+                        name = "left";
+                    }
+                } else if (x === this.width - 1) {
+                    if (y === 0) {
+                        name = "right-top";
+                    } else if (y === this.height - 1) {
+                        name = "right-bottom";
+                    } else {
+                        name = "right";
+                    }
+                } else {
+                    if (y === 0) {
+                        name = "top";
+                    } else if (y === this.height - 1) {
+                        name = "bottom";
+                    } else {
+                        if ([3, 9, 15].includes(x) && [3, 9, 15].includes(y)) {
+                            name = "star";
+                        } else
+                            name = "normal";
+                    }
+                }
+
+                bgEle.style.backgroundImage = `url("img/${name}.png")`;
+                bgEle.style.backgroundSize = `contain`;
+                tableBox.appendChild(bgEle);
+
+                /// 创建
+                tableBox.insertBefore(this._createBlock(new Point(x, y)), tableBox.firstChild);
+
                 lineDiv.appendChild(tableBox);
             }
             this.bindTableEle.appendChild(lineDiv);
@@ -638,6 +693,13 @@ class NormalGame {
                 this.putBlock(point.x, point.y);
                 this.rend();
             })
+            //
+            block.addEventListener("mouseenter", () => {
+                block.style.outlineColor = `${this.colorList[this.turnIndex]}`;
+            });
+            // block.addEventListener("mouseleave", () => {
+            //     block.classList.remove("tableBoxHover");
+            // })
         }
         return block;
     }
@@ -647,14 +709,15 @@ class NormalGame {
      */
     rend() {
         // 先更新鼠标放上去的颜色
-        $(".normalStyle").innerText = `.tableBox:hover {outline-color: ${this.colorList[this.turnIndex]} !important;outline-width:3px !important}`;
+        $(".normalStyle").innerText = this._getHoverCss();
 
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
                 let p = new Point(x, y);
                 let tableBox = this._getBox(p);
                 tableBox.removeChild(tableBox.querySelector(".block"));
-                tableBox.appendChild(this._createBlock(p));
+                tableBox.insertBefore(this._createBlock(p), tableBox.firstChild);
+                // tableBox.appendChild(this._createBlock(p));
             }
         }
     }
