@@ -1,0 +1,1350 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>test</title>
+<style>@keyframes blockBoom {
+  0% {
+    transform: scale(1);
+    opacity: 100%;
+  }
+  50% {
+    filter: saturate(0.5);
+    transform: scale(1);
+  }
+  100% {
+    filter: saturate(0);
+    transform: scale(0);
+  }
+}
+@keyframes small {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.7);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes putFx {
+  0% {
+    transform: scale(3);
+    opacity: 0.54;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes littleShake {
+  0% {
+    transform: translateX(0px) translateY(0px);
+  }
+  50% {
+    transform: translateX(2px) translateY(2px);
+  }
+  100% {
+    transform: translateX(0px) translateY(0px);
+  }
+}
+@keyframes fireFlame {
+  0% {
+    filter: blur(0);
+  }
+  50% {
+    filter: blur(3px);
+  }
+  100% {
+    filter: blur(0);
+  }
+}
+@keyframes fireStoneLeft {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-30px);
+  }
+}
+@keyframes fireStoneRight {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(30px);
+  }
+}
+@keyframes fireStoneTop {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-30px);
+  }
+}
+@keyframes fireStoneDown {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(30px);
+  }
+}
+@keyframes bigShake {
+  0% {
+    transform: translateX(0px) translateY(0px);
+  }
+  20% {
+    transform: translateX(1px) translateY(1px);
+  }
+  40% {
+    transform: translateX(-2px) translateY(-2px);
+  }
+  60% {
+    transform: translateX(2px) translateY(2px);
+  }
+  80% {
+    transform: translateX(-1px) translateY(-1px);
+  }
+  100% {
+    transform: translateX(0px) translateY(0px);
+  }
+}
+/*# sourceMappingURL=animation.css.map */</style><style>* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  overflow-x: hidden;
+}
+body h1 {
+  text-align: center;
+}
+body .normalGameDiv .boardShakeFx {
+  animation-name: littleShake;
+  animation-fill-mode: forwards;
+}
+body .normalGameDiv .table {
+  width: 100%;
+  outline: solid 1px;
+  padding-top: 100px;
+  padding-left: 30px;
+  padding-bottom: 100px;
+  background-color: #d3a969;
+}
+body .normalGameDiv .table .tableLine {
+  height: 30px;
+  margin-bottom: 0;
+}
+body .normalGameDiv .table .tableLine .tableBoxShakeFx {
+  animation-name: small;
+  animation-fill-mode: forwards;
+}
+body .normalGameDiv .table .tableLine .tableBoxHover {
+  outline-width: 3px;
+  z-index: 4;
+  transform: scale(1.5);
+}
+body .normalGameDiv .table .tableLine .tableBox {
+  width: 30px;
+  height: 30px;
+  margin-left: 0;
+  float: left;
+  transition: all 0.2s;
+  position: relative;
+}
+body .normalGameDiv .table .tableLine .tableBox .block {
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  position: absolute;
+  left: 0;
+  top: 0;
+  transition: outline-color 0.5s;
+  outline-width: 3px;
+  outline-color: transparent;
+}
+body .normalGameDiv .table .tableLine .tableBox .block:hover {
+  cursor: pointer;
+  outline-style: solid;
+}
+body .normalGameDiv .table .tableLine .tableBox .bz {
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background-size: contain;
+}
+body .normalGameDiv .table .tableLine .tableBox .bz:hover {
+  filter: blur(5px);
+}
+body .normalGameDiv .table .tableLine .tableBox .littleStone {
+  position: absolute;
+  border-radius: 50%;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  transition-timing-function: ease-out;
+}
+body .normalGameDiv .table .tableLine .tableBox .shrink {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  left: 0;
+  top: 0;
+  border-radius: 50%;
+  z-index: 100;
+  animation-name: blockBoom;
+  animation-fill-mode: forwards;
+}
+body .normalGameDiv .table .tableLine .tableBox .putFx {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  left: 0;
+  top: 0;
+  border-radius: 50%;
+  animation-name: putFx;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
+}
+body .normalGameDiv .table .tableLine .tableBox .wall {
+  background-color: dimgray;
+  border-radius: 20%;
+  outline: none;
+}
+body .normalGameDiv .table .tableLine .tableBox .wall:hover {
+  cursor: not-allowed;
+}
+body .normalGameDiv .table .tableLine .tableBox .fireStone {
+  background-color: #ea4040;
+  border: solid 3px gold;
+  border-radius: 20%;
+  outline: none;
+}
+body .normalGameDiv .table .tableLine .tableBox .fireStone:hover {
+  cursor: not-allowed;
+}
+body .normalGameDiv .table .tableLine .tableBox .fireStoneMoveFx {
+  background-color: #ea4040;
+  border: solid 3px gold;
+  border-radius: 20%;
+  outline: none;
+  width: 30px;
+  height: 30px;
+}
+body .normalGameDiv .table .tableLine .tableBox .playerBlock {
+  border-radius: 50%;
+}
+body .normalGameDiv .table .tableLine .tableBox .playerBlock:hover {
+  cursor: auto;
+}
+/*# sourceMappingURL=index.css.map */</style>    <style class="normalStyle">
+        .air:hover {
+
+        }
+    </style>
+</head>
+<body>
+<h1>围棋大变种</h1>
+<button class="normal">正方形网络</button>
+<div class="normalOption" style="display: none">
+    棋盘宽度：
+    <label>
+        <input type="number" class="width" value="19">
+    </label>
+    棋盘高度：
+    <label>
+        <input type="number" class="height" value="19">
+    </label>
+    玩家数量：
+    <input type="number" value="2" min="2" class="playerNumber">
+    玩家颜色设定：
+    <span class="userColorList">
+        <input type="color" value="#000000">
+        <input type="color" value="#ffffff">
+    </span>
+    地形模式：
+    <select name="hinderMode" class="hinderMode">
+        <option value="传统">传统</option>
+        <option value="随机碎石地">随机碎石地</option>
+        <option value="随机火石地">随机火石地</option>
+        <option value="中凸高原">中凸高原</option>
+        <option value="中框">中框</option>
+        <option value="角落消失">角落消失</option>
+        <option value="九宫格分裂世界">九宫格分裂世界</option>
+        <option value="九宫格迷宫世界">九宫格迷宫世界</option>
+        <option value="田字格分裂世界">田字格分裂世界</option>
+        <option value="X分裂世界">X分裂世界</option>
+    </select>
+    碎石出现概率
+    <input type="range" max="100" min="0" value="0" class="stoneRate">
+    火石出现概率
+    <input type="range" max="100" min="0" value="0" class="firestoneRate">
+    <button class="play">开始游戏</button>
+</div>
+
+<div class="normalGameDiv" style="display: none">
+    <button class="autoPlayRandom100">自动随机100步</button>
+    <button class="autoPlayRandom10">自动随机10步</button>
+    <div class="table"></div>
+</div>
+
+<button class="triangle">三角形</button>
+<button class="triangle">六边形</button>
+</body>
+
+
+<script>/**
+ * 一些辅助小函数
+ * by littlefean
+ */
+function $(queryStr) {
+    if (document.querySelector(queryStr) === null) {
+        console.log("选择器没有找到");
+    }
+    return document.querySelector(queryStr);
+}
+
+/**
+ * 在数组中随机选择一个元素并返回
+ * @return {*}
+ */
+Array.prototype.choiceOne = function () {
+    let r = Math.floor(Math.random() * this.length);
+    return this[r];
+}
+
+/**
+ * 创建一个div
+ * @param classNameString
+ * @param content
+ * @return {HTMLDivElement}
+ */
+function div(classNameString, content = "",) {
+
+    let res = document.createElement("div");
+    if (content !== "") {
+        res.innerText = content;
+    }
+    for (let className of classNameString.split(" ")) {
+        res.classList.add(className);
+    }
+
+    return res;
+}
+
+
+/**
+ * 随机一个十六进制颜色
+ */
+function randomColor() {
+    let strNormal = (str) => {
+        if (str.length === 1) {
+            return "0" + str;
+        }
+        return str;
+    }
+    let r = Math.floor(Math.random() * 256).toString(16);
+    let g = Math.floor(Math.random() * 256).toString(16);
+    let b = Math.floor(Math.random() * 256).toString(16);
+    return `#${strNormal(r)}${strNormal(g)}${strNormal(b)}`;
+
+}
+</script><script>/**
+ * 坐标点类
+ * 用来表示二维数组中的坐标点
+ */
+class Point {
+    /**
+     * 坐标点构造方法
+     * @param x {Number}
+     * @param y {Number}
+     */
+    constructor(x, y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    /**
+     * 获取一个坐标的周围四个点，以数组形式返回
+     * @return {Point[]}
+     */
+    getRound4() {
+        return [
+            new Point(this.x + 1, this.y),
+            new Point(this.x - 1, this.y),
+            new Point(this.x, this.y + 1),
+            new Point(this.x, this.y - 1),
+        ];
+    }
+
+    toString() {
+        return `(x:${this.x},y:${this.y})`;
+    }
+
+    /**
+     * 这个点是否在矩形棋盘内部
+     * @param width
+     * @param height
+     */
+    isInSquireBoard(width, height) {
+        return (0 <= this.x && this.x < width) && (0 <= this.y && this.y < height);
+    }
+
+    outOfBoard(width, height) {
+        return !((0 <= this.x && this.x < width) && (0 <= this.y && this.y < height));
+    }
+
+    /**
+     * 转化成唯一的int值。用于点集类解析用。
+     * @return {*}
+     */
+    hashCode() {
+        return 100_0000 * this.x + this.y;
+    }
+
+    /**
+     * 用于点集类解析用
+     * @param b
+     * @return {Point}
+     */
+    static evalHashCode(b) {
+        let x = Math.floor(b / 100_0000);
+        let y = b % 100_0000;
+        return new Point(x, y);
+    }
+
+    /**
+     * 返回两个点之间的直线距离
+     * @param p
+     * @return {number}
+     */
+    distance(p) {
+        return ((this.x - p.x) ** 2 + (this.y - p.y) ** 2) ** 0.5
+    }
+
+    /**
+     * 返回一个特殊实例
+     * @return {Point}
+     * @constructor
+     */
+    static NegOne() {
+        return new Point(-1, -1);
+    }
+
+    up() {
+        return new Point(this.x, this.y - 1);
+    }
+
+    down() {
+        return new Point(this.x, this.y + 1);
+    }
+
+    left() {
+        return new Point(this.x - 1, this.y);
+    }
+
+    right() {
+        return new Point(this.x + 1, this.y);
+    }
+}
+
+
+/**
+ * 点集合
+ * 封装了js原生的set。
+ */
+class PointSet {
+    constructor() {
+        this.s = new Set();
+    }
+
+    add(point) {
+        this.s.add(point.hashCode());
+    }
+
+    have(point) {
+        return this.s.has(point.hashCode());
+    }
+
+    clear() {
+        this.s.clear();
+    }
+
+    notHave(point) {
+        return !this.have(point);
+    }
+
+    remove(point) {
+        if (this.s.has(point)) {
+            this.s.delete(point.hashCode());
+        }
+    }
+
+    size() {
+        return this.s.size;
+    }
+
+    toArray() {
+        let res = [];
+        for (let v of this.s) {
+            res.push(Point.evalHashCode(v));
+        }
+        return res;
+    }
+}
+</script><script>/**
+ * 枚举类
+ * 此类不要实例化对象，仅作为棋盘的格子中可能出现的东西使用。
+ */
+class GameObject {
+    /**
+     * 空气
+     * @type {number}
+     */
+    static air = 0;
+    /**
+     * 墙体、石头
+     * @type {number}
+     */
+    static wall = 1;
+    /**
+     * 火石
+     * @type {number}
+     */
+    static fireStone = -1;
+    // 上面和css同名
+
+    /**
+     * 从2开始以上都是玩家，包括2
+     * @type {number}
+     */
+    static BasePlayerNumber = 2;
+
+    /**
+     * 传入一个数字，解析这个数字是否是玩家数字
+     * @param n
+     * @return {boolean}
+     */
+    static isPlayer(n) {
+        return n >= 2;
+    }
+
+    /**
+     * 解析一个数字，返回这个数字表示的GameObject的字符串。
+     * 用于渲染时候给div添加对应的css类名
+     * @param n
+     * @return {string}
+     */
+    static eval(n) {
+        for (let k in GameObject) {
+            if (GameObject[k] === n) {
+                return k;
+            }
+        }
+        return "";
+    }
+}
+
+
+</script><script>/**
+ * 方格子的围棋
+ * by littlefean
+ */
+class NormalGame {
+
+    // 火石移动时间
+    static fireStoneMoveMs = 1000;
+
+    /**
+     *
+     * @param ele 界面div
+     * 界面div中有一个table子div用来存储棋盘
+     * @param optionEle 设置界面信息
+     */
+    constructor(ele, optionEle) {
+        this.width = +optionEle.querySelector(".width").value;
+        this.height = +optionEle.querySelector(".height").value;
+        this.bindTableEle = ele.querySelector(".table");
+        this.arr = [];
+
+        /**
+         * 轮流轮
+         * @type {number[]}
+         */
+        this.turnList = [];
+        /**
+         * 每个玩家上一次被吃掉的子的集合
+         * @type {PointSet[]}
+         */
+        this.lastEatenSet = [];
+        /**
+         * 每个玩家对应的颜色
+         * @type {string[]}
+         */
+        this.colorList = []
+        this._initPlayer();
+        this.turnIndex = 0;
+        this._initBoard();
+        this._initFunction();
+    }
+
+    _getHoverCss() {
+        return `.tableBox:hover {
+            outline-color: ${this.colorList[this.turnIndex]} !important;
+            outline-width: 3px !important;
+            z-index: 4;
+            
+        }`;
+    }
+
+    /**
+     * 初始化一些功能：随机下棋按钮绑定事件。
+     * @private
+     */
+    _initFunction() {
+        let randomStep = () => {
+            let airList = [];                 // 收集所有的空气方块
+            for (let y = 0; y < this.height; y++)
+                for (let x = 0; x < this.width; x++)
+                    if (this._get(new Point(x, y)) === GameObject.air)
+                        airList.push(new Point(x, y));
+            if (airList.length === 0)
+                return;
+            let p = airList.choiceOne();
+            this.putBlock(p.x, p.y);
+            this.rend();
+        }
+        $(".autoPlayRandom100").onclick = () => {
+            for (let i = 0; i < 100; i++) {
+                randomStep();
+            }
+        }
+        $(".autoPlayRandom10").onclick = () => {
+            for (let i = 0; i < 10; i++) {
+
+                randomStep();
+            }
+        }
+    }
+
+    /**
+     * 根据设定初始化棋盘数据内容
+     * 在结束时候会调用一次渲染。
+     * @private
+     */
+    _initBoard() {
+        // 构建二维数组，全是空气
+        for (let y = 0; y < this.height; y++) {
+            let line = [];
+            for (let x = 0; x < this.width; x++) {
+                line.push(GameObject.air);
+            }
+            this.arr.push(line);
+        }
+        let selectEle = $(".hinderMode");
+        let modeName = selectEle.options[selectEle.selectedIndex].value;
+        let stoneRate = (+$(".stoneRate").value) / 100;
+        let firestoneRate = (+$(".firestoneRate").value) / 100;
+
+        // 1/3 的点
+        let Lh2 = Math.floor(this.height / 2);
+        let Lw2 = Math.floor(this.width / 2);
+        // 1/3 的点
+        let Lh3 = Math.floor(this.height / 3);
+        let Lw3 = Math.floor(this.width / 3);
+        // 1/4 点
+        let Lh4 = Math.floor(this.height / 4);
+        let Lw4 = Math.floor(this.width / 4);
+        let setWall = (x, y) => {
+            if (new Point(x, y).isInSquireBoard(this.width, this.height)) {
+                this.arr[y][x] = GameObject.wall;
+            }
+        }
+        let setFireStone = (x, y) => {
+            if (new Point(x, y).isInSquireBoard(this.width, this.height)) {
+                this.arr[y][x] = GameObject.fireStone;
+            }
+        }
+        let setWallLine = (p1, p2) => {
+            setWall(p1.x, p1.y);
+            if (p1.x === p2.x && p1.y === p2.y) {
+                setWall(p1.x, p1.y);
+            } else {
+                let step;
+                if (Math.abs(p2.x - p1.x) >= Math.abs(p2.y - p1.y)) {
+                    step = Math.abs(p2.x - p1.x);
+                } else {
+                    step = Math.abs(p2.y - p1.y);
+                }
+                for (let i = 0; i < step; i++) {
+                    let x = Math.round(p1.x + (p2.x - p1.x) / step * (i + 1))
+                    let y = Math.round(p1.y + (p2.y - p1.y) / step * (i + 1));
+                    setWall(x, y);
+                }
+            }
+        }
+        switch (modeName) {
+            case "传统":
+
+                break;
+            case "随机碎石地":
+                for (let y = 0; y < this.height; y++)
+                    for (let x = 0; x < this.width; x++)
+                        if (Math.random() < stoneRate)
+                            setWall(x, y);
+                break;
+            case "随机火石地":
+                for (let y = 0; y < this.height; y++)
+                    for (let x = 0; x < this.width; x++)
+                        if (Math.random() < firestoneRate)
+                            setFireStone(x, y);
+                break;
+            case "中凸高原":
+                for (let y = Lh3; y < Lh3 * 2; y++)
+                    for (let x = Lw3; x < Lw3 * 2; x++)
+                        setWall(x, y);
+                break;
+            case "中框":
+                for (let y = Lh3; y < Lh3 * 2; y++) {
+                    setWall(Lw3, y);
+                    setWall(Lw3 * 2, y);
+                }
+                for (let x = Lw3; x < Lw3 * 2; x++) {
+                    setWall(x, Lh3);
+                    setWall(x, Lh3 * 2);
+                }
+
+                break;
+            case "角落消失":
+                for (let dy = 0; dy < Lh4; dy++) {
+                    for (let dx = 0; dx < Lw4; dx++) {
+                        setWall(dx, dy);
+                        setWall(this.width - 1 - dx, dy);
+                        setWall(dx, this.height - 1 - dy);
+                        setWall(this.width - 1 - dx, this.height - 1 - dy);
+                    }
+                }
+                break;
+            case "九宫格分裂世界":
+                for (let y = 0; y < this.height; y++) {
+                    setWall(Lw3, y);
+                    setWall(Lw3 * 2, y);
+                }
+                for (let x = 0; x < this.width; x++) {
+                    setWall(x, Lh3);
+                    setWall(x, Lh3 * 2);
+                }
+                break;
+            case "田字格分裂世界":
+                for (let y = 0; y < this.height; y++)
+                    setWall(Lw2, y);
+                for (let x = 0; x < this.width; x++)
+                    setWall(x, Lh2);
+                break;
+            case "X分裂世界":
+                setWallLine(new Point(0, 0), new Point(this.width - 1, this.height - 1));
+                setWallLine(new Point(this.width - 1, 0), new Point(0, this.height - 1));
+                break;
+
+
+        }
+        // 初始化前端显示
+        this._initTableEle();
+        this.rend();
+    }
+
+    /**
+     * 初始化玩家颜色信息、上一轮被吃掉的位置数组信息
+     * @private
+     */
+    _initPlayer() {
+        let playerNumber = +$(".playerNumber").value;
+        let userColorList = $(".userColorList");
+        for (let i = 0; i < playerNumber; i++) {
+            this.turnList.push(i + GameObject.BasePlayerNumber);
+            this.lastEatenSet.push(new PointSet());
+            this.colorList.push(userColorList.children[i].value)
+        }
+    }
+
+    /**
+     * 获取周围四个位置 返回一个数组
+     * @private
+     */
+    _getRound(x, y) {
+        let p = new Point(x, y);
+        let res = [];
+        for (let roundPoint of p.getRound4()) {
+            if (roundPoint.isInSquireBoard(this.width, this.height)) {
+                res.push(roundPoint);
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 获取数据棋盘上一个坐标位置是什么
+     * @param p {Point} 传入的是坐标点类型
+     * @return {Number} 返回的是数字
+     * @private
+     */
+    _get(p) {
+        return this.arr[p.y][p.x];
+    }
+
+    /**
+     * 获取棋盘p位置上的小容器格子div。
+     * @param p {Point}
+     * @return {Element}
+     * @private
+     */
+    _getBox(p) {
+        if (p === undefined) {
+            console.log("传入坐标点是undef")
+        }
+        if (p === null) {
+            console.log("传入坐标点是null")
+        }
+        if (typeof p !== "object") {
+            console.log(p, "不是obj")
+        }
+
+        if (p.isInSquireBoard(this.width, this.height)) {
+            return this.bindTableEle.children[p.y].children[p.x];
+        } else {
+            console.log("访问box越界了");
+        }
+    }
+
+    /**
+     * 设定数据棋盘中的物品
+     * @param p 设定的位置的坐标
+     * @param obj {Number}
+     * @private
+     */
+    _set(p, obj) {
+        if (obj === undefined) {
+            console.warn("不能设置棋盘上一个位置为undefined");
+        } else {
+            this.arr[p.y][p.x] = obj;
+        }
+    }
+
+    /**
+     * 从一个点开始获取一连串相同颜色形成的集合
+     * @param rootPoint
+     * @return {PointSet}
+     * @private
+     */
+    _getGroupSet(rootPoint) {
+        let n = this._get(rootPoint);
+        let q = [rootPoint];
+        let visitedBody = new PointSet();
+        visitedBody.add(rootPoint);
+        while (q.length) {
+            let p = q.shift();  // 队列出
+            visitedBody.add(p); // 添加访问
+            // 遍历当前的周围四个
+            for (let roundP of p.getRound4()) {
+                if (roundP.isInSquireBoard(this.width, this.height)) {
+                    if (this._get(roundP) === n && visitedBody.notHave(roundP)) {
+                        // 当前这个是自己还没访问过的身体
+                        q.push(roundP);
+                        visitedBody.add(roundP);
+                    }
+                }
+            }
+        }
+        return visitedBody;
+    }
+
+    /**
+     * 检测一个位置上的棋子，BFS，这一块棋有多少口气
+     * @param rootPoint
+     * @return {number}
+     * @private
+     */
+    _gasCount(rootPoint) {
+        let n = this._get(rootPoint);
+        if (GameObject.isPlayer(n)) {
+            // 当前这个点不是障碍物，也不是空气
+            let q = [rootPoint];
+            let visitedBody = new PointSet();
+            visitedBody.add(rootPoint); // 添加访问
+            let gasSet = new PointSet();
+            while (q.length) {
+                let p = q.shift();  // 队列出
+                // 遍历当前的周围四个
+                for (let roundP of p.getRound4()) {
+                    if (roundP.isInSquireBoard(this.width, this.height)) {
+                        if (this._get(roundP) === GameObject.air) {
+                            // 当前这个是空气
+                            gasSet.add(roundP);
+                        }
+                        if (this._get(roundP) === n && visitedBody.notHave(roundP)) {
+                            // 当前这个是自己还没访问过的身体
+                            q.push(roundP);
+                            visitedBody.add(roundP);
+                        }
+                    }
+                }
+            }
+            return gasSet.size();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * 世界其他生物运行活动
+     * 火石移动
+     */
+    otherMotion() {
+        // 火石移动特效
+        let addFireMoveFx = (p1, p2) => {
+            let dx = p2.x - p1.x;
+            let dy = p2.y - p1.y;
+            let fireEle = div("fireStoneMoveFx");
+            fireEle.style.animationDuration = `${NormalGame.fireStoneMoveMs}ms`;
+            if (dx === 1) {
+                fireEle.style.animationName = "fireStoneRight";
+            } else if (dx === -1) {
+                fireEle.style.animationName = "fireStoneLeft";
+            } else if (dy === 1) {
+                fireEle.style.animationName = "fireStoneDown";
+            } else if (dy === -1) {
+                fireEle.style.animationName = "fireStoneTop";
+            } else {
+                // 火石被困住了
+                console.log("有火石被困住了")
+                fireEle.style.animationName = "bigShake";
+            }
+            this._getBox(p1).appendChild(fireEle);
+            setTimeout(() => {
+                this._getBox(p1).removeChild(fireEle);
+            }, NormalGame.fireStoneMoveMs);
+        };
+        let moveEndLoc = new PointSet(); // 存放已经移动过的火石的位置
+
+        for (let y = 0; y < this.height; y++) {
+            for (let x = 0; x < this.width; x++) {
+                let p = new Point(x, y);
+                if (this._get(p) === GameObject.fireStone) {
+                    if (moveEndLoc.have(p)) {
+                        continue;
+                    }
+                    // 当前位置是一个火石，开始随机移动
+                    let roundAirList = [];
+                    for (let round of this._getRound(x, y)) {
+                        if (this._get(round) === GameObject.air) {
+                            roundAirList.push(round);
+                        }
+                    }
+                    if (roundAirList.length !== 0) {
+                        let moveLoc = roundAirList.choiceOne();
+                        // 处理移动
+                        this._set(p, GameObject.air);
+                        this._set(moveLoc, GameObject.fireStone);
+                        addFireMoveFx(p, moveLoc);
+                        moveEndLoc.add(moveLoc);  // 移动过集合
+
+                        let deadList = [];
+                        for (let r of this._getRound(moveLoc.x, moveLoc.y)) {
+                            if (GameObject.isPlayer(this._get(r))) {
+                                // 检测这个玩家是否死了
+                                if (this._gasCount(r) === 0) {
+                                    // 被火石挤死了
+                                    console.log(r, "这个位置的玩家被挤死了")
+                                    deadList = deadList.concat(this._getGroupSet(r).toArray());
+                                    console.log(deadList);
+                                    // 立刻处理掉
+                                    this.dead(deadList);
+                                }
+                            }
+                        }
+
+                    } else {
+                        // 火石被困住了
+                        addFireMoveFx(p, p);
+                    }
+                }
+            }
+        }
+        this.rend();
+    }
+
+    /**
+     * 处理提子效果
+     * @param attackArr {Point[]}
+     */
+    dead(attackArr) {
+        // 遍历每一个要死的位置
+        for (let deadPoint of attackArr) {
+
+            // 添加一点小动画
+            let dur = 2000;
+            console.log(deadPoint, "dp")
+            let box = this._getBox(deadPoint);
+            let shrinkEle = div("shrink");
+            let colorStr = this.colorList[this._get(deadPoint) - GameObject.BasePlayerNumber]
+            shrinkEle.style.backgroundColor = colorStr;
+            shrinkEle.style.animationDuration = `${dur}ms`
+            box.appendChild(shrinkEle);
+
+            // 崩裂特效
+            for (let i = 0; i < 10; i++) {
+                let littleStone = div("littleStone");
+                littleStone.style.backgroundColor = colorStr;
+                let L = Math.random() * 5 + 1;
+                littleStone.style.width = `${L}px`;
+                littleStone.style.height = `${L}px`;
+                littleStone.style.marginLeft = `${-L / 2}px`;
+                littleStone.style.marginTop = `${-L / 2}px`;
+                littleStone.style.transition = `all ${dur}ms`;
+                littleStone.style.transform = `translateX(0) translateY(0)`;
+                box.appendChild(littleStone);
+
+
+            }
+
+            // 缩小结束
+            setTimeout(() => {
+                box.removeChild(shrinkEle);
+                // 添加崩裂效果
+                let dur = 1000;
+                let dis = 1000;  // 最远距离
+                for (let littleStone of box.querySelectorAll(".littleStone")) {
+                    littleStone.style.transform = `translateX(${(Math.random() * 2 - 1) * dis}px) translateY(${(Math.random() * 2 - 1) * dis}px)`;
+                    setTimeout(() => {
+                        // 删除特效
+                        box.removeChild(littleStone);
+                    }, dur);
+                }
+            }, dur);
+            // 改为空气
+            this._set(deadPoint, GameObject.air);
+        }
+    }
+
+    /**
+     * 世界进行一场迭代，内部数据发生改变，但是没有渲染界面
+     * @param x
+     * @param y
+     */
+    putBlock(x, y) {
+
+        let putPoint = new Point(x, y);
+        // 此函数被触发的时候是某一个玩家下了棋了之后
+        // 当前下棋的玩家是 turIndex指向的玩家
+        let nowUser = this.turnList[this.turnIndex];
+        // 这个下的位置是不是只有一个空气，为了打劫检测用
+        let isOne = this._getGroupSet(putPoint).size() === 1;
+
+        this.arr[y][x] = nowUser;  // 先拟放置
+        // 是否触发了攻击效果
+        let attackFlag = false;
+        let attackArr = [];
+        for (let p of this._getRound(x, y)) {
+            let n = this._get(p);
+            // 邻接的四个棋子中有 玩家棋子 并且这个棋子不是自己
+            if (GameObject.isPlayer(n) && n !== nowUser) {
+                // 从这个棋子开始BFS检测是不是死了
+                if (this._gasCount(p) === 0) {
+                    // 死了
+                    attackFlag = true;
+                    attackArr = attackArr.concat(this._getGroupSet(p).toArray())
+                }
+            }
+        }
+
+        // 这个位置由于打劫的原因，不能立刻下载这里
+        // 原因是：
+        if (
+            attackFlag  // 这个位置下了之后立刻能吃掉对方子
+            && this.lastEatenSet[this.turnIndex].have(putPoint)  // 这个位置上一次被吃掉过
+            && isOne  // 这个位置也恰好只有一个空
+        ) {
+            // 撤销放置
+            this._set(putPoint, GameObject.air);
+            console.warn("由于打劫不能放置");
+            return;
+        }
+
+        // alert(222222)
+        // 更新每个玩家的上一轮被吃位置
+        for (let i = 0; i < this.turnList.length; i++) {
+            this.lastEatenSet[i].clear();
+            for (let deadPoint of attackArr) {
+                if (this._get(deadPoint) === this.turnList[i]) {
+                    this.lastEatenSet[i].add(deadPoint);
+                }
+            }
+        }
+        // 处理提子效果
+        this.dead(attackArr);
+
+        // 没有触发攻击效果
+        if (!attackFlag) {
+            // 如果放下去之后会导致自己死了，那么就不能放，需要撤回放置
+            // 检测自己是不是死了
+            if (this._gasCount(putPoint) === 0) {
+                this._set(putPoint, GameObject.air);
+                // 不能放置！！
+                console.warn("不能触发攻击，且会导致自杀");
+                return;
+            }
+        }
+
+        // 添加放置特效
+        {
+            let dur = 200;
+            let box = this._getBox(putPoint);
+            let fxEle = div("putFx");
+            fxEle.style.backgroundColor = this.colorList[this.turnIndex];
+            fxEle.style.animationDuration = `${dur}ms`
+            box.appendChild(fxEle);
+
+
+            // 删除特效
+            setTimeout(() => {
+                box.removeChild(fxEle);
+
+                // 棋盘振动特效
+                this.bindTableEle.classList.add("boardShakeFx");
+                let shakeDur = 300;
+                this.bindTableEle.style.animationDuration = `${shakeDur}ms`;
+
+                setTimeout(() => {
+                    this.bindTableEle.classList.remove("boardShakeFx");
+                }, shakeDur)
+
+                // 周围的棋子像波浪一样振动
+                if (attackFlag) {
+                    for (let y = 0; y < this.height; y++) {
+                        for (let x = 0; x < this.width; x++) {
+                            let p = new Point(x, y);
+                            let dis = new Point(x, y).distance(putPoint);
+                            setTimeout(() => {
+                                // 延迟添加特效
+                                let dur = 500;
+                                let tableBox = this._getBox(p);
+                                tableBox.style.animationDuration = `${dur}ms`;
+                                tableBox.classList.add("tableBoxShakeFx");
+                                setTimeout(() => {
+                                    tableBox.classList.remove("tableBoxShakeFx")
+                                }, dur);
+                            }, dis * 100);
+                        }
+                    }
+                }
+
+            }, dur);
+        }
+
+        // 迭代轮
+        this.turnIndex++;
+        this.turnIndex %= this.turnList.length;
+        // 其他运动
+        this.otherMotion();
+    }
+
+    /**
+     * 初始化棋盘界面div
+     * @private
+     */
+    _initTableEle() {
+        // $(".normalStyle").innerText = this._getHoverCss();
+
+        this.bindTableEle.innerHTML = "";
+        for (let y = 0; y < this.height; y++) {
+            let lineDiv = div("tableLine");
+            for (let x = 0; x < this.width; x++) {
+                let tableBox = div(`tableBox`);
+
+
+                /// 创建背景图片
+                let bgEle = div("bz");
+
+
+                let name = "";
+
+                if (x === 0) {
+                    if (y === 0) {
+                        name = "left-top";
+                    } else if (y === this.height - 1) {
+                        name = "left-bottom";
+                    } else {
+                        name = "left";
+                    }
+                } else if (x === this.width - 1) {
+                    if (y === 0) {
+                        name = "right-top";
+                    } else if (y === this.height - 1) {
+                        name = "right-bottom";
+                    } else {
+                        name = "right";
+                    }
+                } else {
+                    if (y === 0) {
+                        name = "top";
+                    } else if (y === this.height - 1) {
+                        name = "bottom";
+                    } else {
+                        if ([3, 9, 15].includes(x) && [3, 9, 15].includes(y)) {
+                            name = "star";
+                        } else
+                            name = "normal";
+                    }
+                }
+
+                bgEle.style.backgroundImage = `url("img/${name}.png")`;
+                bgEle.style.backgroundSize = `contain`;
+                tableBox.appendChild(bgEle);
+
+                /// 创建
+                tableBox.insertBefore(this._createBlock(new Point(x, y)), tableBox.firstChild);
+
+                lineDiv.appendChild(tableBox);
+            }
+            this.bindTableEle.appendChild(lineDiv);
+        }
+    }
+
+    /**
+     * 根据数据棋盘的某一个位置，创建一个div并返回，用于渲染函数
+     * @param point
+     * @return {HTMLDivElement}
+     * @private
+     */
+    _createBlock(point) {
+        let block = div(`block`);
+        let n = this._get(point);
+
+        if (GameObject.isPlayer(n)) {
+            block.classList.add("playerBlock");
+            block.style.backgroundColor = this.colorList[n - GameObject.BasePlayerNumber];
+            // 连接生动效果
+            let up = point.up();
+            let down = point.down();
+            let left = point.left();
+            let right = point.right();
+
+
+            if (up.outOfBoard(this.width, this.height) || this._get(up) === n) {
+                block.style.borderTopLeftRadius = "0";
+                block.style.borderTopRightRadius = "0";
+            }
+            if (down.outOfBoard(this.width, this.height) || this._get(down) === n) {
+                block.style.borderBottomLeftRadius = "0";
+                block.style.borderBottomRightRadius = "0";
+            }
+            if (left.outOfBoard(this.width, this.height) || this._get(left) === n) {
+                block.style.borderBottomLeftRadius = "0";
+                block.style.borderTopLeftRadius = "0";
+            }
+            if (right.outOfBoard(this.width, this.height) || this._get(right) === n) {
+                block.style.borderBottomRightRadius = "0";
+                block.style.borderTopRightRadius = "0";
+            }
+        } else {
+            block.classList.add(GameObject.eval(n));
+        }
+        if (n === GameObject.fireStone) {
+            // 隔一个移动时间再显示
+            block.style.display = "none";
+            setTimeout(() => {
+                block.style.display = "block";
+            }, NormalGame.fireStoneMoveMs);
+        }
+        if (n === GameObject.air) {
+            // 添加点击事件
+            block.addEventListener("click", () => {
+                this.putBlock(point.x, point.y);
+                this.rend();
+            })
+            //
+            block.addEventListener("mouseenter", () => {
+                block.style.outlineColor = `${this.colorList[this.turnIndex]}`;
+            });
+        }
+        return block;
+    }
+
+    /**
+     * 刷新渲染
+     */
+    rend() {
+        // 先更新鼠标放上去的颜色
+        $(".normalStyle").innerText = this._getHoverCss();
+
+        for (let y = 0; y < this.height; y++) {
+            for (let x = 0; x < this.width; x++) {
+                let p = new Point(x, y);
+                let tableBox = this._getBox(p);
+                tableBox.removeChild(tableBox.querySelector(".block"));
+                tableBox.insertBefore(this._createBlock(p), tableBox.firstChild);
+                // tableBox.appendChild(this._createBlock(p));
+            }
+        }
+    }
+
+
+}
+</script><script>/**
+ * 主界面运行 main 方法
+ * by littlefean
+ */
+window.onload = function () {
+    let normalOption = $(".normalOption");
+    // 玩家数量更改
+    let playerNumberInput = $(".playerNumber");
+    playerNumberInput.onchange = function () {
+        let colorList = $(".userColorList");
+        let curNum = colorList.childElementCount;
+        if (+playerNumberInput.value > curNum) {
+            // 增加颜色数量
+            for (let i = 0; i < +playerNumberInput.value - curNum; i++) {
+                let cInput = document.createElement("input");
+                cInput.type = "color";
+                cInput.value = randomColor();
+                colorList.appendChild(cInput);
+            }
+        } else if (+playerNumberInput.value < colorList.childElementCount) {
+            // 减少玩家数量，直接重新更改，颜色全部随机得了
+            colorList.innerHTML = "";
+            for (let i = 0; i < +playerNumberInput.value; i++) {
+                let cInput = document.createElement("input");
+                cInput.type = "color";
+                cInput.value = randomColor();
+                colorList.appendChild(cInput);
+            }
+        } else {
+
+        }
+    }
+    // 选择正方模式按钮
+    $(".normal").addEventListener("click", () => {
+        // 弹出选择框
+        normalOption.style.display = "block";
+    });
+
+    // 正方模式设置好了的开始按钮
+    $(".normalOption .play").onclick = function () {
+        let gameDiv = $(".normalGameDiv");
+        gameDiv.style.display = "block";
+        let game = new NormalGame(gameDiv, normalOption);
+        normalOption.style.display = "none";
+    }
+}
+</script></html>
