@@ -8,7 +8,8 @@
 
 ## 体验方法
 
-下载项目到本地（电脑端），用浏览器打开 `index.html` 文件
+1. 下载项目到本地（电脑端），用浏览器打开 `index.html` 文件
+2. 通过[这个链接](https://littlefean.github.io/GoVariation/)查看，进入github page
 
 ## 已经实现的
 
@@ -47,8 +48,9 @@ This project is an experiment of innovative design of Go. At present, it is stil
 
 ## Experience method
 
-
 Download the project to the local (computer side) and open ` index Html ` file
+
+or [click this link](https://littlefean.github.io/GoVariation/) to play.
 
 ## Implemented
 
