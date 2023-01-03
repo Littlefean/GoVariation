@@ -26,8 +26,6 @@ window.onload = function () {
                 cInput.value = randomColor();
                 colorList.appendChild(cInput);
             }
-        } else {
-
         }
     }
     // 选择正方模式按钮
@@ -42,5 +40,11 @@ window.onload = function () {
         gameDiv.style.display = "block";
         let game = new NormalGame(gameDiv, normalOption);
         normalOption.style.display = "none";
+    }
+
+
+    // 解决取色器关闭后输入法无法使用
+    $("input[type='color']").onblur = function () {
+        window.open().close();
     }
 }

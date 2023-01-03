@@ -1,3 +1,4 @@
+// 棋子死亡后的收缩成一个小点的特效
 @keyframes blockBoom {
   0% {
     transform: scale(1);
@@ -13,6 +14,7 @@
   }
 }
 
+// 触发吃子震荡波的棋盘格子缩小特效
 @keyframes small {
   0% {
     transform: scale(1);
@@ -24,7 +26,7 @@
     transform: scale(1);
   }
 }
-
+// 棋子落地前的特效
 @keyframes putFx {
   0% {
     transform: scale(3);
@@ -35,7 +37,7 @@
     opacity: 1;
   }
 }
-
+// 棋盘抖动特效
 @keyframes littleShake {
   @s: 2px;
   0% {
@@ -49,6 +51,7 @@
   }
 }
 
+// 火石闪烁特效，现在似乎已经弃用
 @keyframes fireFlame {
   0% {
     filter: blur(0);
@@ -60,6 +63,9 @@
     filter: blur(0);
   }
 }
+
+/// 火石向左右上下移动的四个特效
+
 
 @L: 30px;
 //@m: 5px;
@@ -100,6 +106,7 @@
   }
 }
 
+/// 火石被困住的时候颤抖的特效
 @keyframes bigShake {
   @s: 1px;
   @S: 2px;

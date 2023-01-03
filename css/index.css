@@ -3,17 +3,103 @@
   padding: 0;
   box-sizing: border-box;
 }
-body {
+button,
+input[type="number"],
+select {
+  border: #ccc solid 2px;
+  padding: 0.7em 1em;
+  border-radius: 10px;
+  margin: 2px;
+  transition: all 0.3s;
+}
+button:hover,
+input[type="number"]:hover,
+select:hover,
+button:focus,
+input[type="number"]:focus,
+select:focus {
+  background-color: #333;
+  color: #fff;
+  box-shadow: #aaa 0 0 5px;
+}
+button::-webkit-inner-spin-button,
+input[type="number"]::-webkit-inner-spin-button,
+select::-webkit-inner-spin-button {
+  display: none;
+}
+input[type="number"],
+select {
+  padding: 0.5em;
+  border-radius: 7px;
+}
+input[type="color"] {
+  border: #ccc solid 2px;
+  border-radius: 3px;
+  margin: 2px;
+  transition: all 0.3s;
+}
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+}
+input[type="color"]:hover,
+input[type="color"]:focus {
+  box-shadow: #aaa 0 0 10px;
+}
+html {
+  height: 100%;
+}
+html body {
   overflow-x: hidden;
+  background-image: linear-gradient(to top right, #ddd, #ccc);
+  height: 100%;
 }
-body h1 {
+html body h1 {
   text-align: center;
+  margin: 0.5em 0;
 }
-body .normalGameDiv .boardShakeFx {
+html body h1::before,
+html body h1::after {
+  content: "/////";
+  margin: 0 0.5em;
+  color: rebeccapurple;
+}
+html body .shapeSelect,
+html body .normalGameDiv {
+  text-align: center;
+  position: relative;
+}
+html body .shapeSelect .wip:hover::before,
+html body .normalGameDiv .wip:hover::before {
+  content: "制作中";
+  position: absolute;
+  top: 4em;
+  color: #000;
+  font-weight: bold;
+}
+html body .normalOption {
+  border: #ccc solid 2px;
+  border-radius: 10px;
+  padding: 1em;
+  margin: 1em;
+  box-shadow: #aaa 0 0 2px;
+}
+html body .normalOption label {
+  display: block;
+}
+html body .normalOption :not(label) {
+  margin-bottom: 0.5em;
+}
+html body .normalOption button {
+  display: block;
+}
+html body .normalGameDiv .boardShakeFx {
   animation-name: littleShake;
   animation-fill-mode: forwards;
 }
-body .normalGameDiv .table {
+html body .normalGameDiv .table {
   width: 100%;
   outline: solid 1px;
   padding-top: 100px;
@@ -21,20 +107,20 @@ body .normalGameDiv .table {
   padding-bottom: 100px;
   background-color: #d3a969;
 }
-body .normalGameDiv .table .tableLine {
+html body .normalGameDiv .table .tableLine {
   height: 30px;
   margin-bottom: 0;
 }
-body .normalGameDiv .table .tableLine .tableBoxShakeFx {
+html body .normalGameDiv .table .tableLine .tableBoxShakeFx {
   animation-name: small;
   animation-fill-mode: forwards;
 }
-body .normalGameDiv .table .tableLine .tableBoxHover {
+html body .normalGameDiv .table .tableLine .tableBoxHover {
   outline-width: 3px;
   z-index: 4;
   transform: scale(1.5);
 }
-body .normalGameDiv .table .tableLine .tableBox {
+html body .normalGameDiv .table .tableLine .tableBox {
   width: 30px;
   height: 30px;
   margin-left: 0;
@@ -42,7 +128,7 @@ body .normalGameDiv .table .tableLine .tableBox {
   transition: all 0.2s;
   position: relative;
 }
-body .normalGameDiv .table .tableLine .tableBox .block {
+html body .normalGameDiv .table .tableLine .tableBox .block {
   width: 100%;
   height: 100%;
   z-index: 3;
@@ -53,11 +139,11 @@ body .normalGameDiv .table .tableLine .tableBox .block {
   outline-width: 3px;
   outline-color: transparent;
 }
-body .normalGameDiv .table .tableLine .tableBox .block:hover {
+html body .normalGameDiv .table .tableLine .tableBox .block:hover {
   cursor: pointer;
   outline-style: solid;
 }
-body .normalGameDiv .table .tableLine .tableBox .bz {
+html body .normalGameDiv .table .tableLine .tableBox .bz {
   display: block;
   position: absolute;
   left: 0;
@@ -67,10 +153,10 @@ body .normalGameDiv .table .tableLine .tableBox .bz {
   z-index: 0;
   background-size: contain;
 }
-body .normalGameDiv .table .tableLine .tableBox .bz:hover {
+html body .normalGameDiv .table .tableLine .tableBox .bz:hover {
   filter: blur(5px);
 }
-body .normalGameDiv .table .tableLine .tableBox .littleStone {
+html body .normalGameDiv .table .tableLine .tableBox .littleStone {
   position: absolute;
   border-radius: 50%;
   left: 50%;
@@ -78,7 +164,7 @@ body .normalGameDiv .table .tableLine .tableBox .littleStone {
   z-index: 1;
   transition-timing-function: ease-out;
 }
-body .normalGameDiv .table .tableLine .tableBox .shrink {
+html body .normalGameDiv .table .tableLine .tableBox .shrink {
   position: absolute;
   width: 30px;
   height: 30px;
@@ -89,7 +175,7 @@ body .normalGameDiv .table .tableLine .tableBox .shrink {
   animation-name: blockBoom;
   animation-fill-mode: forwards;
 }
-body .normalGameDiv .table .tableLine .tableBox .putFx {
+html body .normalGameDiv .table .tableLine .tableBox .putFx {
   position: absolute;
   width: 30px;
   height: 30px;
@@ -100,24 +186,24 @@ body .normalGameDiv .table .tableLine .tableBox .putFx {
   animation-fill-mode: forwards;
   animation-timing-function: ease-in-out;
 }
-body .normalGameDiv .table .tableLine .tableBox .wall {
+html body .normalGameDiv .table .tableLine .tableBox .wall {
   background-color: dimgray;
   border-radius: 20%;
   outline: none;
 }
-body .normalGameDiv .table .tableLine .tableBox .wall:hover {
+html body .normalGameDiv .table .tableLine .tableBox .wall:hover {
   cursor: not-allowed;
 }
-body .normalGameDiv .table .tableLine .tableBox .fireStone {
+html body .normalGameDiv .table .tableLine .tableBox .fireStone {
   background-color: #ea4040;
   border: solid 3px gold;
   border-radius: 20%;
   outline: none;
 }
-body .normalGameDiv .table .tableLine .tableBox .fireStone:hover {
+html body .normalGameDiv .table .tableLine .tableBox .fireStone:hover {
   cursor: not-allowed;
 }
-body .normalGameDiv .table .tableLine .tableBox .fireStoneMoveFx {
+html body .normalGameDiv .table .tableLine .tableBox .fireStoneMoveFx {
   background-color: #ea4040;
   border: solid 3px gold;
   border-radius: 20%;
@@ -125,10 +211,10 @@ body .normalGameDiv .table .tableLine .tableBox .fireStoneMoveFx {
   width: 30px;
   height: 30px;
 }
-body .normalGameDiv .table .tableLine .tableBox .playerBlock {
+html body .normalGameDiv .table .tableLine .tableBox .playerBlock {
   border-radius: 50%;
 }
-body .normalGameDiv .table .tableLine .tableBox .playerBlock:hover {
+html body .normalGameDiv .table .tableLine .tableBox .playerBlock:hover {
   cursor: auto;
 }
 /*# sourceMappingURL=index.css.map */
