@@ -1,66 +1,62 @@
 <!doctype html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>test</title>
+    <title>围棋大变种</title>
     <link rel="stylesheet" href="css/animation.css">
     <link rel="stylesheet" href="css/index.css">
-    <style class="normalStyle">
-        .air:hover {
-
-        }
-    </style>
+    <style class="normalStyle"></style>
 </head>
+
 <body>
-<h1>围棋大变种</h1>
-<button class="normal">正方形网络</button>
-<div class="normalOption" style="display: none">
-    棋盘宽度：
-    <label>
+    <h1>围棋大变种</h1>
+    
+    <div class="shapeSelect">
+        <button class="normal">正方形网络</button>
+        <button class="triangle wip">三角形</button>
+        <button class="hexagon wip">六边形</button>
+    </div>
+
+    <div class="normalOption" style="display: none">
+        <label>棋盘宽度：</label>
         <input type="number" class="width" value="19">
-    </label>
-    棋盘高度：
-    <label>
+        <label>棋盘高度：</label>
         <input type="number" class="height" value="19">
-    </label>
-    玩家数量：
-    <input type="number" value="2" min="2" class="playerNumber">
-    玩家颜色设定：
-    <span class="userColorList">
-        <input type="color" value="#000000">
-        <input type="color" value="#ffffff">
-    </span>
-    地形模式：
-    <select name="hinderMode" class="hinderMode">
-        <option value="传统">传统</option>
-        <option value="随机碎石地">随机碎石地</option>
-        <option value="随机火石地">随机火石地</option>
-        <option value="中凸高原">中凸高原</option>
-        <option value="中框">中框</option>
-        <option value="角落消失">角落消失</option>
-        <option value="九宫格分裂世界">九宫格分裂世界</option>
-        <option value="九宫格迷宫世界">九宫格迷宫世界</option>
-        <option value="田字格分裂世界">田字格分裂世界</option>
-        <option value="X分裂世界">X分裂世界</option>
-    </select>
-    碎石出现概率
-    <input type="range" max="100" min="0" value="0" class="stoneRate">
-    火石出现概率
-    <input type="range" max="100" min="0" value="0" class="firestoneRate">
-    <button class="play">开始游戏</button>
-</div>
-
-<div class="normalGameDiv" style="display: none">
-    <button class="autoPlayRandom100">自动随机100步</button>
-    <button class="autoPlayRandom10">自动随机10步</button>
-    <div class="table"></div>
-</div>
-
-<button class="triangle">三角形</button>
-<button class="triangle">六边形</button>
+        <label>玩家数量：</label>
+        <input type="number" value="2" min="2" class="playerNumber">
+        <label>玩家颜色设定：</label>
+        <span class="userColorList">
+            <input type="color" value="#000000">
+            <input type="color" value="#ffffff">
+        </span>
+        <label>地形模式：</label>
+        <select name="hinderMode" class="hinderMode">
+            <option value="传统">传统</option>
+            <option value="随机碎石地">随机碎石地</option>
+            <option value="随机火石地">随机火石地</option>
+            <option value="中凸高原">中凸高原</option>
+            <option value="中框">中框</option>
+            <option value="角落消失">角落消失</option>
+            <option value="九宫格分裂世界">九宫格分裂世界</option>
+            <option value="九宫格迷宫世界">九宫格迷宫世界</option>
+            <option value="田字格分裂世界">田字格分裂世界</option>
+            <option value="X分裂世界">X分裂世界</option>
+        </select>
+        <label>碎石出现概率</label>
+        <input type="range" max="100" min="0" value="0" class="stoneRate">
+        <label>火石出现概率</label>
+        <input type="range" max="100" min="0" value="0" class="firestoneRate">
+        <button class="play">开始游戏 / 重新开始</button>
+    </div>
+    <div class="normalGameDiv" style="display: none">
+        <button class="autoPlayRandom100">自动随机100步</button>
+        <button class="autoPlayRandom10">自动随机10步</button>
+        <div class="table"></div>
+    </div>
 </body>
 
 
@@ -69,4 +65,5 @@
 <script src="js/gameObject.js"></script>
 <script src="js/normalGame.js"></script>
 <script src="js/index.js"></script>
+
 </html>
