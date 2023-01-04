@@ -38,6 +38,14 @@ class NormalGame {
         this.turnIndex = 0;
         this._initBoard();
         this._initFunction();
+        /**
+         * 动画开关
+         * @type {{}}
+         */
+        this.animationSwitch = {
+            "boardShake": false,  // 棋盘抖动
+            "shockWave": true,  // 触发吃子时的 落子位置 震荡波
+        }
     }
 
     _getHoverCss() {
@@ -50,7 +58,7 @@ class NormalGame {
     }
 
     /**
-     * 初始化一些功能：随机下棋按钮绑定事件。
+     * 初始化一些功能：给界面上的按钮绑定事件。例如随机下棋按钮
      * @private
      */
     _initFunction() {
@@ -76,6 +84,18 @@ class NormalGame {
 
                 randomStep();
             }
+        }
+        let self = this;  // self 指 这个类本身的this。
+
+        $(".animationSwitch-boardShake").onclick = function () {
+            self.animationSwitch.boardShake = !self.animationSwitch.boardShake;
+            this.innerText = this.innerText.split("：")[0] + "：" + self.animationSwitch.boardShake;
+            console.log(123)
+        }
+        $(".animationSwitch-shockWave").onclick = function () {
+            self.animationSwitch.shockWave = !self.animationSwitch.shockWave;
+            this.innerText = this.innerText.split("：")[0] + "：" + self.animationSwitch.shockWave;
+            console.log(456)
         }
     }
 
@@ -562,16 +582,18 @@ class NormalGame {
                 box.removeChild(fxEle);
 
                 // 棋盘振动特效
-                this.bindTableEle.classList.add("boardShakeFx");
-                let shakeDur = 300;
-                this.bindTableEle.style.animationDuration = `${shakeDur}ms`;
+                if (this.animationSwitch.boardShake) {
+                    this.bindTableEle.classList.add("boardShakeFx");
+                    let shakeDur = 300;
+                    this.bindTableEle.style.animationDuration = `${shakeDur}ms`;
 
-                setTimeout(() => {
-                    this.bindTableEle.classList.remove("boardShakeFx");
-                }, shakeDur)
+                    setTimeout(() => {
+                        this.bindTableEle.classList.remove("boardShakeFx");
+                    }, shakeDur)
+                }
 
                 // 周围的棋子像波浪一样振动
-                if (attackFlag) {
+                if (attackFlag && this.animationSwitch.shockWave) {
                     for (let y = 0; y < this.height; y++) {
                         for (let x = 0; x < this.width; x++) {
                             let p = new Point(x, y);
