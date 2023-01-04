@@ -138,6 +138,7 @@ html body .normalGameDiv .table .tableLine .tableBox .block {
   transition: outline-color 0.5s;
   outline-width: 3px;
   outline-color: transparent;
+  border-radius: 50%;
 }
 html body .normalGameDiv .table .tableLine .tableBox .block:hover {
   cursor: pointer;
