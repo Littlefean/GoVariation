@@ -17,14 +17,39 @@ body {
 
   .gameArea {
     margin-top: 10px;
+    margin-bottom: 100px;
     outline: solid 1px;
 
     .divArea {
+      outline: solid 1px;
+      display: block;
+      position: relative;
+      margin: 0 auto;
 
+      .box {
+        position: absolute;
+        @L: 40px;
+        width: @L;
+        height: @L;
+        border-radius: 50%;
+        //outline: solid 1px;
+        margin-left: -(@L/2);
+        margin-top: -(@L/2);
+
+        transition: all 0.5s;
+        border: 3px solid transparent;
+
+        &:hover {
+          border-color: black;
+          cursor: pointer;
+        }
+      }
     }
 
     .gameCanvas {
       outline: solid 1px;
+      margin: 0 auto;
+      display: block;
     }
   }
 }

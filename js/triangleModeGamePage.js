@@ -59,5 +59,6 @@ function btnInit() {
             playersCount: playersCount,
         }
         let game = new TriangleModeGame(data, gameAreaElement);
+        game.start();
     }
 }
