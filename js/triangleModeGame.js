@@ -27,6 +27,44 @@ class TriangleModeGame extends Game {
         this._initRendBoard();
     }
 
+    // 初始化功能：给界面上的其他按钮绑定事件
+    _initFunction() {
+
+    }
+
+    /**
+     * 检测一个位置上的棋子，BFS，这一块棋有多少口气
+     * @param rootPoint
+     * @return {number}
+     */
+    _libertyCount(rootPoint) {
+        let n = this._get(rootPoint);
+        if (!GameObject.isPlayer(n)) {
+            return 0;
+        }
+        // 当前这个点不是障碍物，也不是空气
+        let q = [rootPoint];
+        let visitedBody = new PointSet();
+        visitedBody.add(rootPoint); // 添加访问
+        let libertySet = new PointSet();
+        while (q.length) {
+            let p = q.shift();  // 队列出
+            // 遍历当前的周围四个
+            for (let roundP of this._getRoundPoint(p)) {
+                if (this._get(roundP) === GameObject.air) {
+                    // 当前这个是空气
+                    libertySet.add(roundP);
+                }
+                if (this._get(roundP) === n && visitedBody.notHave(roundP)) {
+                    // 当前这个是自己还没访问过的身体
+                    q.push(roundP);
+                    visitedBody.add(roundP);
+                }
+            }
+        }
+        return libertySet.size();
+    }
+
     // 初始化渲染棋盘
     _initRendBoard() {
         let canvas = this.gameAreaElement.querySelector(".gameCanvas");
@@ -45,13 +83,6 @@ class TriangleModeGame extends Game {
         canvas.style.marginTop = `${-boardAreaHeight}px`;
         // 填色
         drawRectFill(ctx, 0, 0, boardAreaWidth, boardAreaHeight, "rgb(216,176,77)")
-        // 打点
-        for (let y = 0; y < this.height; y++) {
-            for (let x = 0; x < this.width; x++) {
-                let locPx = this._pointToPxPoint(new Point(x, y));
-                drawCircle(ctx, locPx.x, locPx.y, dotR, "rgba(100,100,100, 1)");
-            }
-        }
         // 连线
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
@@ -63,7 +94,13 @@ class TriangleModeGame extends Game {
                 }
             }
         }
-
+        // 打点
+        for (let y = 0; y < this.height; y++) {
+            for (let x = 0; x < this.width; x++) {
+                let locPx = this._pointToPxPoint(new Point(x, y));
+                drawCircle(ctx, locPx.x, locPx.y, dotR, "rgba(100,100,100, 1)");
+            }
+        }
         // div层构建
         let divAreaEle = this.gameAreaElement.querySelector(".divArea");
         divAreaEle.style.width = boardAreaWidth + "px";
@@ -79,18 +116,186 @@ class TriangleModeGame extends Game {
                 divAreaEle.appendChild(box);
                 // 更新映射字典
                 this.locToBoxElement[`${x},${y}`] = box;
+                // 绑定点击效果
+                this._bindClickEvent(point);
             }
         }
+        this._changeHoverCss();
     }
 
     /**
      * 给一个box创建一个点击效果
+     * @param point {Point}
      * @private
      */
-    _bindClickEvent(x, y) {
-        let boxElement = this._getBoxElementByLoc(x, y);
+    _bindClickEvent(point) {
+        let boxElement = this._getBoxElementByLoc(point);
         // todo
+        boxElement.onclick = () => {
+            let putColor = this.getCurrentPlayerColor();
+            if (this.placeable(point)) {
+                this.putPiece(point);
+                this.putPieceRend(point, putColor);
+                this._changeHoverCss();
+            }
+        }
+    }
 
+    _changeHoverCss() {
+        $(".selectStyle").innerText = `
+        .divArea .box:hover {
+            border-color: ${this.colorList[this.turnIndex]} !important;
+            z-index: 4;
+        }`;
+    }
+
+    /**
+     * 在某一个位置下一个棋子-渲染层
+     * @param putPoint {Point}
+     * @param playerColor {String}
+     */
+    putPieceRend(putPoint, playerColor) {
+        console.log(playerColor);
+        console.log(this.turnIndex, this.colorList)
+        let boxElement = this._getBoxElementByLoc(putPoint);
+        let pieceElement = div("piece");
+        pieceElement.style.backgroundColor = playerColor;
+        boxElement.appendChild(pieceElement);
+
+    }
+
+    /**
+     * 在某一个位置下一个棋子  数据层改变
+     *
+     * 这个函数上游可能被鼠标点击事件所触发，也可能被随机下棋方法所触发
+     * @param putPoint {Point}
+     * @return boolean 是否可以放置
+     */
+    putPiece(putPoint) {
+        // 当前下棋的玩家是 turIndex指向的玩家
+        let nowUser = this.turnList[this.turnIndex];
+        // 这个下的位置是不是只有一个空，为了打劫检测用
+        let isOne = this._getGroupSet(putPoint).size() === 1;
+
+        this.arr[putPoint.y][putPoint.x] = nowUser;  // 先拟放置
+        // 是否触发了攻击效果
+        let attackFlag = false;
+        let attackArr = [];
+        for (let p of this._getRoundPoint(putPoint)) {
+            let n = this._get(p);
+            // 邻接的6个棋子中有 玩家棋子 并且这个棋子不是自己
+            if (GameObject.isPlayer(n) && n !== nowUser) {
+                // 从这个棋子开始BFS检测是不是死了
+                if (this._libertyCount(p) === 0) {
+                    // 死了
+                    attackFlag = true;
+                    attackArr = attackArr.concat(this._getGroupSet(p).toArray())
+                }
+            }
+        }
+
+        // 这个位置由于打劫的原因，不能立刻下载这里
+        // 原因是：
+        if (
+            attackFlag  // 这个位置下了之后立刻能吃掉对方子
+            && this.lastEatenSet[this.turnIndex].have(putPoint)  // 这个位置上一次被吃掉过
+            && isOne  // 这个位置也恰好只有一个空
+        ) {
+            // 撤销放置
+            this._set(putPoint, GameObject.air);
+            console.warn("由于打劫不能放置");
+            return false;
+        }
+
+        // 更新每个玩家的上一轮被吃位置
+        for (let i = 0; i < this.turnList.length; i++) {
+            this.lastEatenSet[i].clear();
+            for (let deadPoint of attackArr) {
+                if (this._get(deadPoint) === this.turnList[i]) {
+                    this.lastEatenSet[i].add(deadPoint);
+                }
+            }
+        }
+        // 处理提子效果
+        this.removePieceData(attackArr);
+
+        // 没有触发攻击效果
+        if (!attackFlag) {
+            // 如果放下去之后会导致自己死了，那么就不能放，需要撤回放置
+            // 检测自己是不是死了
+            if (this._libertyCount(putPoint) === 0) {
+                this._set(putPoint, GameObject.air);
+                // 不能放置！！
+                console.warn("不能触发攻击，且会导致自杀");
+                return false;
+            }
+        }
+        // 迭代轮
+        this.turnNext();
+        return true;
+    }
+
+    /**
+     * 检测当前玩家是否可以在当前位置放置棋子
+     * @param putPoint
+     */
+    placeable(putPoint) {
+        if (GameObject.air !== this._get(putPoint)) {
+            return false;
+        }
+        // 当前下棋的玩家是 turIndex指向的玩家
+        let nowUser = this.turnList[this.turnIndex];
+        // 这个下的位置是不是只有一个空，为了打劫检测用
+        let isOne = this._getGroupSet(putPoint).size() === 1;
+        // todo
+        return true;
+    }
+
+
+    /**
+     * 处理提子 - 数据层
+     * @param attackArr {Point[]} 要被提的子做构成的列表
+     */
+    removePieceData(attackArr) {
+        for (let deadPoint of attackArr) {
+            this._set(deadPoint, GameObject.air);
+        }
+    }
+
+    /**
+     * 处理提子 - 渲染层
+     * @param attackArr {Point[]} 要被提的子做构成的列表
+     */
+    removePieceElement(attackArr) {
+        for (let deadPoint of attackArr) {
+            // todo
+        }
+    }
+
+    /**
+     * 从一个点开始获取一连串相同颜色形成的集合
+     * @param rootPoint
+     * @return {PointSet}
+     * @private
+     */
+    _getGroupSet(rootPoint) {
+        let n = this._get(rootPoint);
+        let q = [rootPoint];
+        let visitedBody = new PointSet();
+        visitedBody.add(rootPoint);
+        while (q.length) {
+            let p = q.shift();  // 队列出
+            visitedBody.add(p); // 添加访问
+            // 遍历当前的周围
+            for (let roundP of this._getRoundPoint(p)) {
+                if (this._get(roundP) === n && visitedBody.notHave(roundP)) {
+                    // 当前这个是自己还没访问过的身体
+                    q.push(roundP);
+                    visitedBody.add(roundP);
+                }
+            }
+        }
+        return visitedBody;
     }
 
     /**
@@ -102,6 +307,7 @@ class TriangleModeGame extends Game {
         super._getBoxElementByLoc(loc);
         return this.locToBoxElement[`${loc.x},${loc.y}`];
     }
+
 
     /**
      * 根据坐标点获取这个点对应的像素坐标点

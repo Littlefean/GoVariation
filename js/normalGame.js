@@ -264,37 +264,35 @@ class NormalGame extends Game {
      * 检测一个位置上的棋子，BFS，这一块棋有多少口气
      * @param rootPoint
      * @return {number}
-     * @private
      */
     _libertyCount(rootPoint) {
         let n = this._get(rootPoint);
-        if (GameObject.isPlayer(n)) {
-            // 当前这个点不是障碍物，也不是空气
-            let q = [rootPoint];
-            let visitedBody = new PointSet();
-            visitedBody.add(rootPoint); // 添加访问
-            let libertySet = new PointSet();
-            while (q.length) {
-                let p = q.shift();  // 队列出
-                // 遍历当前的周围四个
-                for (let roundP of p.getRound4()) {
-                    if (roundP.isInSquireBoard(this.width, this.height)) {
-                        if (this._get(roundP) === GameObject.air) {
-                            // 当前这个是空气
-                            libertySet.add(roundP);
-                        }
-                        if (this._get(roundP) === n && visitedBody.notHave(roundP)) {
-                            // 当前这个是自己还没访问过的身体
-                            q.push(roundP);
-                            visitedBody.add(roundP);
-                        }
+        if (!GameObject.isPlayer(n)) {
+            return 0;
+        }
+        // 当前这个点不是障碍物，也不是空气
+        let q = [rootPoint];
+        let visitedBody = new PointSet();
+        visitedBody.add(rootPoint); // 添加访问
+        let libertySet = new PointSet();
+        while (q.length) {
+            let p = q.shift();  // 队列出
+            // 遍历当前的周围四个
+            for (let roundP of p.getRound4()) {
+                if (roundP.isInSquireBoard(this.width, this.height)) {
+                    if (this._get(roundP) === GameObject.air) {
+                        // 当前这个是空气
+                        libertySet.add(roundP);
+                    }
+                    if (this._get(roundP) === n && visitedBody.notHave(roundP)) {
+                        // 当前这个是自己还没访问过的身体
+                        q.push(roundP);
+                        visitedBody.add(roundP);
                     }
                 }
             }
-            return libertySet.size();
-        } else {
-            return 0;
         }
+        return libertySet.size();
     }
 
     /**
@@ -377,7 +375,7 @@ class NormalGame extends Game {
 
     /**
      * 处理提子效果
-     * @param attackArr {Point[]}
+     * @param attackArr {Point[]} 要被提的子做构成的列表
      */
     dead(attackArr) {
         // 遍历每一个要死的位置

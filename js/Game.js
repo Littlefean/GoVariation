@@ -59,6 +59,22 @@ class Game {
     }
 
     /**
+     * 获取当前是要哪个玩家下棋了
+     * @return {number} 玩家编号
+     */
+    getCurrentPlayer() {
+        return this.turnList[this.turnIndex];
+    }
+
+    /**
+     * 获取当前要下棋的玩家的颜色
+     * @return {string}
+     */
+    getCurrentPlayerColor() {
+        return this.colorList[this.turnIndex];
+    }
+
+    /**
      * 获取数据棋盘上一个坐标位置是什么
      * @param p {Point} 传入的是坐标点类型
      * @return {Number} 返回的是数字
@@ -122,6 +138,7 @@ class Game {
             console.warn("数据越界 105");
         }
     }
+
     /**
      * 获取棋盘p位置上的小容器格子div。
      * 这个父类的函数只做一个检测
@@ -131,4 +148,5 @@ class Game {
     _getBoxElementByLoc(p) {
         this.__testLoc(p)
     }
+
 }
