@@ -4,10 +4,7 @@
  * by littlefean
  */
 
-class TriangleModeGame {
-    // 用于设置画布的大小
-    // static AREA_WIDTH = 1000;
-    // static AREA_HEIGHT = 500;
+class TriangleModeGame extends Game {
     static T_LEN = 40; // px  正三角形的边长
     static DX = 20;
     static DY = 20;
@@ -18,11 +15,15 @@ class TriangleModeGame {
      * @param element 渲染时候绑定的div标签元素 就是HTML中的 .gameArea 元素
      */
     constructor(optionData, element) {
+        super();
         this.width = optionData.width;
         this.height = optionData.height;
 
+        // 渲染层
+        this.locToBoxElement = {};  // (x,y) -> div 的映射字典，直接拿到HTML元素
         this.gameAreaElement = element;
 
+        this._initBoardData();
         this._initRendBoard();
     }
 
@@ -63,7 +64,7 @@ class TriangleModeGame {
             }
         }
 
-        // 整div层
+        // div层构建
         let divAreaEle = this.gameAreaElement.querySelector(".divArea");
         divAreaEle.style.width = boardAreaWidth + "px";
         divAreaEle.style.height = boardAreaHeight + "px";
@@ -76,8 +77,30 @@ class TriangleModeGame {
                 box.style.left = pointPx.x + "px";
                 box.style.top = pointPx.y + "px";
                 divAreaEle.appendChild(box);
+                // 更新映射字典
+                this.locToBoxElement[`${x},${y}`] = box;
             }
         }
+    }
+
+    /**
+     * 给一个box创建一个点击效果
+     * @private
+     */
+    _bindClickEvent(x, y) {
+        let boxElement = this._getBoxElementByLoc(x, y);
+        // todo
+
+    }
+
+    /**
+     * 通过坐标点拿到对应的 元素box
+     * @return {*}
+     * @private
+     */
+    _getBoxElementByLoc(loc) {
+        super._getBoxElementByLoc(loc);
+        return this.locToBoxElement[`${loc.x},${loc.y}`];
     }
 
     /**
@@ -103,6 +126,7 @@ class TriangleModeGame {
      * 根据一个点，获取周围的六个点，可能由于是边缘，会少于六个
      * @param p {Point}
      * @private
+     * @return Point[]
      */
     _getRoundPoint(p) {
         // 先把六个点准备好

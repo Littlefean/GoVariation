@@ -2,7 +2,7 @@
  * 方格子的围棋
  * by littlefean
  */
-class NormalGame {
+class NormalGame extends Game {
 
     // 火石移动时间
     static fireStoneMoveMs = 1000;
@@ -14,28 +14,10 @@ class NormalGame {
      * @param optionEle 设置界面信息
      */
     constructor(ele, optionEle) {
+        super();
         this.width = +optionEle.querySelector(".width").value;
         this.height = +optionEle.querySelector(".height").value;
         this.bindTableEle = ele.querySelector(".table");
-        this.arr = [];
-
-        /**
-         * 轮流轮
-         * @type {number[]}
-         */
-        this.turnList = [];
-        /**
-         * 每个玩家上一次被吃掉的子的集合
-         * @type {PointSet[]}
-         */
-        this.lastEatenSet = [];
-        /**
-         * 每个玩家对应的颜色
-         * @type {string[]}
-         */
-        this.colorList = []
-        this._initPlayer();
-        this.turnIndex = 0;
         this._initBoard();
         this._initFunction();
         /**
@@ -71,7 +53,7 @@ class NormalGame {
             if (airList.length === 0)
                 return;
             let p = airList.choiceOne();
-            this.putBlock(p.x, p.y);
+            this.putPiece(p);
             this.rend();
         }
         $(".autoPlayRandom100").onclick = () => {
@@ -105,14 +87,7 @@ class NormalGame {
      * @private
      */
     _initBoard() {
-        // 构建二维数组，全是空气
-        for (let y = 0; y < this.height; y++) {
-            let line = [];
-            for (let x = 0; x < this.width; x++) {
-                line.push(GameObject.air);
-            }
-            this.arr.push(line);
-        }
+        super._initBoardData();
         let selectEle = $(".hinderMode");
         let modeName = selectEle.options[selectEle.selectedIndex].value;
         let stoneRate = (+$(".stoneRate").value) / 100;
@@ -225,26 +200,14 @@ class NormalGame {
         this.rend();
     }
 
-    /**
-     * 初始化玩家颜色信息、上一轮被吃掉的位置数组信息
-     * @private
-     */
-    _initPlayer() {
-        let playerNumber = +$(".playerNumber").value;
-        let userColorList = $(".userColorList");
-        for (let i = 0; i < playerNumber; i++) {
-            this.turnList.push(i + GameObject.BasePlayerNumber);
-            this.lastEatenSet.push(new PointSet());
-            this.colorList.push(userColorList.children[i].value)
-        }
-    }
 
     /**
      * 获取周围四个位置 返回一个数组
+     * @return {Point[]}
      * @private
      */
-    _getRound(x, y) {
-        let p = new Point(x, y);
+    _getRoundPoint(p) {
+        super._getRoundPoint(p);
         let res = [];
         for (let roundPoint of p.getRound4()) {
             if (roundPoint.isInSquireBoard(this.width, this.height)) {
@@ -255,32 +218,12 @@ class NormalGame {
     }
 
     /**
-     * 获取数据棋盘上一个坐标位置是什么
-     * @param p {Point} 传入的是坐标点类型
-     * @return {Number} 返回的是数字
-     * @private
-     */
-    _get(p) {
-        return this.arr[p.y][p.x];
-    }
-
-    /**
      * 获取棋盘p位置上的小容器格子div。
      * @param p {Point}
      * @return {Element}
-     * @private
      */
-    _getBox(p) {
-        if (p === undefined) {
-            console.log("传入坐标点是undef")
-        }
-        if (p === null) {
-            console.log("传入坐标点是null")
-        }
-        if (typeof p !== "object") {
-            console.log(p, "不是obj")
-        }
-
+    _getBoxElementByLoc(p) {
+        super._getBoxElementByLoc(p);
         if (p.isInSquireBoard(this.width, this.height)) {
             return this.bindTableEle.children[p.y].children[p.x];
         } else {
@@ -288,19 +231,6 @@ class NormalGame {
         }
     }
 
-    /**
-     * 设定数据棋盘中的物品
-     * @param p 设定的位置的坐标
-     * @param obj {Number}
-     * @private
-     */
-    _set(p, obj) {
-        if (obj === undefined) {
-            console.warn("不能设置棋盘上一个位置为undefined");
-        } else {
-            this.arr[p.y][p.x] = obj;
-        }
-    }
 
     /**
      * 从一个点开始获取一连串相同颜色形成的集合
@@ -391,9 +321,9 @@ class NormalGame {
                 console.log("有火石被困住了")
                 fireEle.style.animationName = "bigShake";
             }
-            this._getBox(p1).appendChild(fireEle);
+            this._getBoxElementByLoc(p1).appendChild(fireEle);
             setTimeout(() => {
-                this._getBox(p1).removeChild(fireEle);
+                this._getBoxElementByLoc(p1).removeChild(fireEle);
             }, NormalGame.fireStoneMoveMs);
         };
         let moveEndLoc = new PointSet(); // 存放已经移动过的火石的位置
@@ -407,7 +337,7 @@ class NormalGame {
                     }
                     // 当前位置是一个火石，开始随机移动
                     let roundAirList = [];
-                    for (let round of this._getRound(x, y)) {
+                    for (let round of this._getRoundPoint(p)) {
                         if (this._get(round) === GameObject.air) {
                             roundAirList.push(round);
                         }
@@ -421,7 +351,7 @@ class NormalGame {
                         moveEndLoc.add(moveLoc);  // 移动过集合
 
                         let deadList = [];
-                        for (let r of this._getRound(moveLoc.x, moveLoc.y)) {
+                        for (let r of this._getRoundPoint(moveLoc)) {
                             if (GameObject.isPlayer(this._get(r))) {
                                 // 检测这个玩家是否死了
                                 if (this._libertyCount(r) === 0) {
@@ -456,7 +386,7 @@ class NormalGame {
             // 添加一点小动画
             let dur = 2000;
             console.log(deadPoint, "dp")
-            let box = this._getBox(deadPoint);
+            let box = this._getBoxElementByLoc(deadPoint);
             let shrinkEle = div("shrink");
             let colorStr = this.colorList[this._get(deadPoint) - GameObject.BasePlayerNumber]
             shrinkEle.style.backgroundColor = colorStr;
@@ -499,24 +429,22 @@ class NormalGame {
     }
 
     /**
+     * 在一个位置下一个棋子，
      * 世界进行一场迭代，内部数据发生改变，但是没有渲染界面
-     * @param x
-     * @param y
+     * 此函数被触发的时候是某一个玩家下了棋了之后
+     * @param putPoint {Point}
      */
-    putBlock(x, y) {
-
-        let putPoint = new Point(x, y);
-        // 此函数被触发的时候是某一个玩家下了棋了之后
+    putPiece(putPoint) {
         // 当前下棋的玩家是 turIndex指向的玩家
         let nowUser = this.turnList[this.turnIndex];
         // 这个下的位置是不是只有一个空气，为了打劫检测用
         let isOne = this._getGroupSet(putPoint).size() === 1;
 
-        this.arr[y][x] = nowUser;  // 先拟放置
+        this.arr[putPoint.y][putPoint.x] = nowUser;  // 先拟放置
         // 是否触发了攻击效果
         let attackFlag = false;
         let attackArr = [];
-        for (let p of this._getRound(x, y)) {
+        for (let p of this._getRoundPoint(putPoint)) {
             let n = this._get(p);
             // 邻接的四个棋子中有 玩家棋子 并且这个棋子不是自己
             if (GameObject.isPlayer(n) && n !== nowUser) {
@@ -542,7 +470,6 @@ class NormalGame {
             return;
         }
 
-        // alert(222222)
         // 更新每个玩家的上一轮被吃位置
         for (let i = 0; i < this.turnList.length; i++) {
             this.lastEatenSet[i].clear();
@@ -570,7 +497,7 @@ class NormalGame {
         // 添加放置特效
         {
             let dur = 200;
-            let box = this._getBox(putPoint);
+            let box = this._getBoxElementByLoc(putPoint);
             let fxEle = div("putFx");
             fxEle.style.backgroundColor = this.colorList[this.turnIndex];
             fxEle.style.animationDuration = `${dur}ms`
@@ -601,7 +528,7 @@ class NormalGame {
                             setTimeout(() => {
                                 // 延迟添加特效
                                 let dur = 500;
-                                let tableBox = this._getBox(p);
+                                let tableBox = this._getBoxElementByLoc(p);
                                 tableBox.style.animationDuration = `${dur}ms`;
                                 tableBox.classList.add("tableBoxShakeFx");
                                 setTimeout(() => {
@@ -616,8 +543,7 @@ class NormalGame {
         }
 
         // 迭代轮
-        this.turnIndex++;
-        this.turnIndex %= this.turnList.length;
+        this.turnNext();
         // 其他运动
         this.otherMotion();
     }
@@ -733,7 +659,7 @@ class NormalGame {
         if (n === GameObject.air) {
             // 添加点击事件
             block.addEventListener("click", () => {
-                this.putBlock(point.x, point.y);
+                this.putPiece(point);
                 this.rend();
             })
             //
@@ -754,7 +680,7 @@ class NormalGame {
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
                 let p = new Point(x, y);
-                let tableBox = this._getBox(p);
+                let tableBox = this._getBoxElementByLoc(p);
                 tableBox.removeChild(tableBox.querySelector(".block"));
                 tableBox.insertBefore(this._createBlock(p), tableBox.firstChild);
                 // tableBox.appendChild(this._createBlock(p));
