@@ -129,6 +129,16 @@ class PointSet {
         }
     }
 
+    /**
+     * 把另一个点集里的点合并到自己的集合里
+     * @param pointSet {PointSet}
+     */
+    merge(pointSet) {
+        for (let p of pointSet.toArray()) {
+            this.add(p);
+        }
+    }
+
     size() {
         return this.s.size;
     }

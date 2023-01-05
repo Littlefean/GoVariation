@@ -134,8 +134,16 @@ class TriangleModeGame extends Game {
         boxElement.onclick = () => {
             let putColor = this.getCurrentPlayerColor();
             if (this.placeable(point)) {
-                this.putPiece(point);
+                let deadArr = this.getAttackPointList(point);  // 提子的集合
+                // 数据层更新-放置+提子
+                this.putPiece(point, deadArr);
+                // 渲染层更新-放置
                 this.putPieceRend(point, putColor);
+                // 渲染层更新-提子
+                this.killPieceRend(deadArr);
+                // 迭代轮
+                this.turnNext();
+                // 渲染层更新-鼠标悬浮框css
                 this._changeHoverCss();
             }
         }
@@ -155,83 +163,39 @@ class TriangleModeGame extends Game {
      * @param playerColor {String}
      */
     putPieceRend(putPoint, playerColor) {
-        console.log(playerColor);
-        console.log(this.turnIndex, this.colorList)
         let boxElement = this._getBoxElementByLoc(putPoint);
         let pieceElement = div("piece");
         pieceElement.style.backgroundColor = playerColor;
         boxElement.appendChild(pieceElement);
+    }
 
+    /**
+     * 渲染提子
+     * @param pointArr {Point[]}
+     */
+    killPieceRend(pointArr) {
+        for (let p of pointArr) {
+            let boxEle = this._getBoxElementByLoc(p);
+            boxEle.removeChild(boxEle.querySelector(".piece"));
+        }
     }
 
     /**
      * 在某一个位置下一个棋子  数据层改变
-     *
+     * 先验条件是可以落子
      * 这个函数上游可能被鼠标点击事件所触发，也可能被随机下棋方法所触发
      * @param putPoint {Point}
+     * @param deadArr {Point[]}  触发的提子的点集
      * @return boolean 是否可以放置
      */
-    putPiece(putPoint) {
+    putPiece(putPoint, deadArr) {
         // 当前下棋的玩家是 turIndex指向的玩家
-        let nowUser = this.turnList[this.turnIndex];
-        // 这个下的位置是不是只有一个空，为了打劫检测用
-        let isOne = this._getGroupSet(putPoint).size() === 1;
-
-        this.arr[putPoint.y][putPoint.x] = nowUser;  // 先拟放置
-        // 是否触发了攻击效果
-        let attackFlag = false;
-        let attackArr = [];
-        for (let p of this._getRoundPoint(putPoint)) {
-            let n = this._get(p);
-            // 邻接的6个棋子中有 玩家棋子 并且这个棋子不是自己
-            if (GameObject.isPlayer(n) && n !== nowUser) {
-                // 从这个棋子开始BFS检测是不是死了
-                if (this._libertyCount(p) === 0) {
-                    // 死了
-                    attackFlag = true;
-                    attackArr = attackArr.concat(this._getGroupSet(p).toArray())
-                }
-            }
+        let curPlayer = this.getCurrentPlayer();
+        this._set(putPoint, curPlayer);
+        // 处理提子
+        for (let deadPoint of deadArr) {
+            this._set(deadPoint, GameObject.air);
         }
-
-        // 这个位置由于打劫的原因，不能立刻下载这里
-        // 原因是：
-        if (
-            attackFlag  // 这个位置下了之后立刻能吃掉对方子
-            && this.lastEatenSet[this.turnIndex].have(putPoint)  // 这个位置上一次被吃掉过
-            && isOne  // 这个位置也恰好只有一个空
-        ) {
-            // 撤销放置
-            this._set(putPoint, GameObject.air);
-            console.warn("由于打劫不能放置");
-            return false;
-        }
-
-        // 更新每个玩家的上一轮被吃位置
-        for (let i = 0; i < this.turnList.length; i++) {
-            this.lastEatenSet[i].clear();
-            for (let deadPoint of attackArr) {
-                if (this._get(deadPoint) === this.turnList[i]) {
-                    this.lastEatenSet[i].add(deadPoint);
-                }
-            }
-        }
-        // 处理提子效果
-        this.removePieceData(attackArr);
-
-        // 没有触发攻击效果
-        if (!attackFlag) {
-            // 如果放下去之后会导致自己死了，那么就不能放，需要撤回放置
-            // 检测自己是不是死了
-            if (this._libertyCount(putPoint) === 0) {
-                this._set(putPoint, GameObject.air);
-                // 不能放置！！
-                console.warn("不能触发攻击，且会导致自杀");
-                return false;
-            }
-        }
-        // 迭代轮
-        this.turnNext();
         return true;
     }
 
@@ -240,26 +204,87 @@ class TriangleModeGame extends Game {
      * @param putPoint
      */
     placeable(putPoint) {
+        // 如果这个地方连空气都不是，那么就不能放
         if (GameObject.air !== this._get(putPoint)) {
             return false;
         }
         // 当前下棋的玩家是 turIndex指向的玩家
-        let nowUser = this.turnList[this.turnIndex];
+        let curPlayer = this.getCurrentPlayer();
+
         // 这个下的位置是不是只有一个空，为了打劫检测用
         let isOne = this._getGroupSet(putPoint).size() === 1;
         // todo
-        return true;
+        // 如果能立刻触发吃子效果，则能下，
+        // 如果不能立刻触发吃子效果，
+        //      如果会导致自己自杀，则不能下，
+        //      如果不会导致自己自杀，可以下
+
+        if (this.attackFlag(putPoint)) {
+            console.log("触发攻击");
+            return true;
+        } else {
+            console.log("没触发攻击");
+            // 判断是否会导致自己自杀
+            this._set(putPoint, curPlayer);
+            if (this._libertyCount(putPoint) === 0) {
+                // 自杀了
+                this._set(putPoint, GameObject.air);  // 撤销操作
+                return false;
+            } else {
+                // 没有导致自己自杀，可以下
+                this._set(putPoint, GameObject.air);  // 撤销操作
+                return true;
+            }
+        }
     }
 
+    /**
+     * 在putPoint位置放置棋子是否触发吃子效果
+     * @param putPoint {Point}
+     */
+    attackFlag(putPoint) {
+        let curPlayer = this.getCurrentPlayer();
+        this._set(putPoint, curPlayer);
+        // 检测周围6棋子
+        for (let roundPoint of this._getRoundPoint(putPoint)) {
+            // 如果这个邻居是其他人
+            if (GameObject.isPlayer(this._get(roundPoint)) && this._get(roundPoint) !== curPlayer) {
+                // 开始统计一下是不是没气了
+                if (this._libertyCount(roundPoint) === 0) {
+                    // 撤销操作
+                    this._set(putPoint, GameObject.air);
+                    return true;
+                }
+            }
+        }
+        // 撤销操作
+        this._set(putPoint, GameObject.air);
+        return false;
+    }
 
     /**
-     * 处理提子 - 数据层
-     * @param attackArr {Point[]} 要被提的子做构成的列表
+     * 先验条件：在putPoint放置棋子之后 能 触发攻击
+     * 返回触发攻击之后所有要提的子 的位置
+     * 如果先验条件不成立，会返回一个空集合
+     * @param putPoint {Point}
+     * @return {Point[]}
      */
-    removePieceData(attackArr) {
-        for (let deadPoint of attackArr) {
-            this._set(deadPoint, GameObject.air);
+    getAttackPointList(putPoint) {
+        let res = new PointSet();
+        let curPlayer = this.getCurrentPlayer();
+        this._set(putPoint, curPlayer);
+        // 检测周围6棋子
+        for (let roundPoint of this._getRoundPoint(putPoint)) {
+            // 如果这个邻居是其他人
+            if (GameObject.isPlayer(this._get(roundPoint)) && this._get(roundPoint) !== curPlayer) {
+                // 开始统计一下是不是没气了
+                if (this._libertyCount(roundPoint) === 0) {
+                    res.merge(this._getGroupSet(roundPoint));
+                }
+            }
         }
+        this._set(putPoint, GameObject.air); // 撤销操作
+        return res.toArray();
     }
 
     /**
