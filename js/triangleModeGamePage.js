@@ -1,13 +1,18 @@
 /**
- * 主界面运行 main 方法
+ * 三角形游戏界面的js代码
  * by littlefean
  */
+
 window.onload = function () {
-    // 三角形游戏按钮
-    $(".triangle").onclick = function () {
-        window.open("html/triangleModeGame.html");
-    }
-    let normalOption = $(".normalOption");
+    pageInit();
+    btnInit();
+}
+
+/**
+ * 界面初始化按钮
+ */
+function pageInit() {
+    $(".gameArea").style.display = "none";
     // 玩家数量更改
     let playerNumberInput = $(".playerNumber");
     playerNumberInput.onchange = function () {
@@ -32,23 +37,27 @@ window.onload = function () {
             }
         }
     }
-    // 选择正方模式按钮
-    $(".normal").addEventListener("click", () => {
-        // 弹出选择框
-        normalOption.style.display = "block";
-    });
+}
 
-    // 正方模式设置好了的开始按钮
-    $(".normalOption .play").onclick = function () {
-        let gameDiv = $(".normalGameDiv");
-        gameDiv.style.display = "block";
-        let game = new NormalGame(gameDiv, normalOption);
-        normalOption.style.display = "none";
-    }
+/**
+ * 初始化各种按钮
+ */
+function btnInit() {
+    let gameOptionElement = $(".gameOption");
+    let gameAreaElement = $(".gameArea")
+    // 开始游戏按钮
+    $(".play").onclick = function () {
+        gameAreaElement.style.display = "block";
 
+        let h = +gameOptionElement.querySelector(".height").value;
+        let w = +gameOptionElement.querySelector(".width").value;
+        let playersCount = +gameOptionElement.querySelector(".playerNumber").value;
 
-    // 解决取色器关闭后输入法无法使用
-    $("input[type='color']").onblur = function () {
-        window.open().close();
+        let data = {
+            height: h,
+            width: w,
+            playersCount: playersCount,
+        }
+        let game = new TriangleModeGame(data, gameAreaElement);
     }
 }

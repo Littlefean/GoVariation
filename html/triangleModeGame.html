@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>三角形模式的棋盘</title>
+    <link rel="stylesheet" href="../css/triangleModeGamePage.css">
+</head>
+<body>
+<h1>三角形棋盘模式</h1>
+<a href="../index.html">返回主界面</a>
+<!--游戏设置面板-->
+<div class="gameOption">
+    <span>棋盘宽度：</span>
+    <input type="number" class="width" value="19">
+    <span>棋盘高度：</span>
+    <input type="number" class="height" value="19">
+    <span>玩家数量：</span>
+    <input type="number" value="2" min="2" class="playerNumber">
+    <span>玩家颜色设定：</span>
+    <span class="userColorList">
+        <input type="color" value="#000000">
+        <input type="color" value="#ffffff">
+    </span>
+    <button class="play">开始游戏 / 重新开始</button>
+</div>
+<!--游戏区域-->
+<div class="gameArea">
+    <!--DIV层-->
+    <div class="divArea"></div>
+    <!--Canvas层-->
+    <canvas class="gameCanvas"></canvas>
+</div>
+</body>
+<script src="../js/tools.js"></script>
+<script src="../js/Point.js"></script>
+<script src="../js/gameObject.js"></script>
+<script src="../js/triangleModeGame.js"></script>
+<script src="../js/triangleModeGamePage.js"></script>
+</html>

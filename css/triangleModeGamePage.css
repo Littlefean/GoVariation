@@ -1,0 +1,21 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body h1 {
+  text-align: center;
+}
+body .gameOption {
+  height: 100px;
+  outline: solid 1px;
+  background-color: gray;
+}
+body .gameArea {
+  margin-top: 10px;
+  outline: solid 1px;
+}
+body .gameArea .gameCanvas {
+  outline: solid 1px;
+}
+/*# sourceMappingURL=triangleModeGamePage.css.map */
