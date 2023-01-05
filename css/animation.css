@@ -107,4 +107,15 @@
     transform: translateX(0px) translateY(0px);
   }
 }
+@keyframes lightShake {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(0.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
 /*# sourceMappingURL=animation.css.map */

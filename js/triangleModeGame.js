@@ -22,6 +22,7 @@ class TriangleModeGame extends Game {
         // 渲染层
         this.locToBoxElement = {};  // (x,y) -> div 的映射字典，直接拿到HTML元素
         this.gameAreaElement = element;
+        this.locToEffectBoxElement = {};
 
         this._initBoardData();
         this._initRendBoard();
@@ -80,7 +81,8 @@ class TriangleModeGame extends Game {
         let boardAreaWidth = dx * 2 + this.width * L - L / 2;
         let boardAreaHeight = dy * 2 + (this.height - 1) * H
         canvasResize(canvas, boardAreaWidth, boardAreaHeight);
-        canvas.style.marginTop = `${-boardAreaHeight}px`;
+
+
         // 填色
         drawRectFill(ctx, 0, 0, boardAreaWidth, boardAreaHeight, "rgb(216,176,77)")
         // 连线
@@ -120,7 +122,28 @@ class TriangleModeGame extends Game {
                 this._bindClickEvent(point);
             }
         }
+        //divEffect层构建
+        let divEffectAreaEle = this.gameAreaElement.querySelector(".divEffectArea");
+        divEffectAreaEle.style.width = boardAreaWidth + "px";
+        divEffectAreaEle.style.height = boardAreaHeight + "px";
+        for (let y = 0; y < this.height; y++) {
+            for (let x = 0; x < this.width; x++) {
+                let point = new Point(x, y);
+                let pointPx = this._pointToPxPoint(point);
+                // 创建div
+                let effectBox = div("effectBox");
+                effectBox.style.left = pointPx.x + "px";
+                effectBox.style.top = pointPx.y + "px";
+                divEffectAreaEle.appendChild(effectBox);
+                this.locToEffectBoxElement[`${x},${y}`] = effectBox;
+            }
+        }
         this._changeHoverCss();
+
+        // 三层叠在一起
+        divEffectAreaEle.style.marginTop = `${-boardAreaHeight}px`;
+        canvas.style.marginTop = `${-boardAreaHeight}px`;
+
     }
 
     /**
@@ -130,7 +153,6 @@ class TriangleModeGame extends Game {
      */
     _bindClickEvent(point) {
         let boxElement = this._getBoxElementByLoc(point);
-        // todo
         boxElement.onclick = () => {
             let putColor = this.getCurrentPlayerColor();
             if (this.placeable(point)) {
@@ -163,10 +185,14 @@ class TriangleModeGame extends Game {
      * @param playerColor {String}
      */
     putPieceRend(putPoint, playerColor) {
+        // div层
         let boxElement = this._getBoxElementByLoc(putPoint);
         let pieceElement = div("piece");
         pieceElement.style.backgroundColor = playerColor;
         boxElement.appendChild(pieceElement);
+        // divEffect层
+        this._getEffectBoxElementByLoc(putPoint).style.backgroundColor = playerColor;
+
     }
 
     /**
@@ -177,6 +203,7 @@ class TriangleModeGame extends Game {
         for (let p of pointArr) {
             let boxEle = this._getBoxElementByLoc(p);
             boxEle.removeChild(boxEle.querySelector(".piece"));
+            this._getEffectBoxElementByLoc(p).style.backgroundColor = "transparent";
         }
     }
 
@@ -331,6 +358,15 @@ class TriangleModeGame extends Game {
     _getBoxElementByLoc(loc) {
         super._getBoxElementByLoc(loc);
         return this.locToBoxElement[`${loc.x},${loc.y}`];
+    }
+
+    /**
+     * 通过坐标点拿到对应的 特效层的元素box
+     * @return {*}
+     * @private
+     */
+    _getEffectBoxElementByLoc(loc) {
+        return this.locToEffectBoxElement[`${loc.x},${loc.y}`];
     }
 
 

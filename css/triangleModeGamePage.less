@@ -19,6 +19,7 @@ body {
     margin-top: 10px;
     margin-bottom: 100px;
     outline: solid 1px;
+    position: relative;
 
     .divArea {
       outline: solid 1px;
@@ -26,18 +27,25 @@ body {
       position: relative;
       margin: 0 auto;
 
+      @SelectCircleR: 40px;
+      @Border: 3px;
+
       .box {
+        //opacity: 0;
+        width: @SelectCircleR;
+        height: @SelectCircleR;
         position: absolute;
-        @L: 40px;
-        width: @L;
-        height: @L;
+
         border-radius: 50%;
-        //outline: solid 1px;
-        margin-left: -(@L/2);
-        margin-top: -(@L/2);
+        //outline: solid 1px red;
+        margin-left: -(@SelectCircleR/2);
+        margin-top: -(@SelectCircleR/2);
 
         transition: all 0.5s;
-        border: 3px solid transparent;
+        border: @Border solid transparent;
+
+        z-index: 5;
+
 
         &:hover {
           //border-color: black;
@@ -46,11 +54,45 @@ body {
 
         // 棋子
         .piece {
-          width: 100%;
-          height: 100%;
+          position: absolute;
+          @l: @SelectCircleR*0.8; // 棋子直径
+          width: @l;
+          height: @l;
+          left: (@SelectCircleR/2) - @Border;
+          top: (@SelectCircleR/2) - @Border;
+          margin-left: -(@l/2);
+          margin-top: -(@l/2);
           background-color: pink;
           border-radius: 50%;
+          //box-shadow: #666 -2px -2px 5px inset;
+
         }
+      }
+    }
+
+    .divEffectArea {
+      outline: solid 1px red;
+      margin: 0 auto;
+      display: block;
+      position: relative;
+      filter: contrast(30);
+
+      .effectBox {
+        border-radius: 50%;
+        position: absolute;
+        @L: 50px;
+        width: @L;
+        height: @L;
+        margin-left: -(@L/2);
+        margin-top: -(@L/2);
+        //outline: solid 5px yellow;
+        filter: blur(15px);
+
+        transition: all 0.5s;
+
+        animation-name: lightShake;
+        animation-iteration-count: infinite;
+        animation-duration: 5s;
       }
     }
 
