@@ -27,6 +27,7 @@ class NormalGame extends Game {
         this.animationSwitch = {
             "boardShake": false,  // 棋盘抖动
             "shockWave": true,  // 触发吃子时的 落子位置 震荡波
+            connect: true,  // 棋子连接
         }
     }
 
@@ -72,12 +73,14 @@ class NormalGame extends Game {
         $(".animationSwitch-boardShake").onclick = function () {
             self.animationSwitch.boardShake = !self.animationSwitch.boardShake;
             this.innerText = this.innerText.split("：")[0] + "：" + self.animationSwitch.boardShake;
-            console.log(123)
         }
         $(".animationSwitch-shockWave").onclick = function () {
             self.animationSwitch.shockWave = !self.animationSwitch.shockWave;
             this.innerText = this.innerText.split("：")[0] + "：" + self.animationSwitch.shockWave;
-            console.log(456)
+        }
+        $(".animationSwitch-connect").onclick = function () {
+            self.animationSwitch.connect = !self.animationSwitch.connect;
+            this.innerText = this.innerText.split("：")[0] + "：" + self.animationSwitch.connect;
         }
     }
 
@@ -621,28 +624,29 @@ class NormalGame extends Game {
         if (GameObject.isPlayer(n)) {
             block.classList.add("playerBlock");
             block.style.backgroundColor = this.colorList[n - GameObject.BasePlayerNumber];
-            // 连接生动效果
-            let up = point.up();
-            let down = point.down();
-            let left = point.left();
-            let right = point.right();
-
-
-            if (up.outOfBoard(this.width, this.height) || this._get(up) === n) {
-                block.style.borderTopLeftRadius = "0";
-                block.style.borderTopRightRadius = "0";
-            }
-            if (down.outOfBoard(this.width, this.height) || this._get(down) === n) {
-                block.style.borderBottomLeftRadius = "0";
-                block.style.borderBottomRightRadius = "0";
-            }
-            if (left.outOfBoard(this.width, this.height) || this._get(left) === n) {
-                block.style.borderBottomLeftRadius = "0";
-                block.style.borderTopLeftRadius = "0";
-            }
-            if (right.outOfBoard(this.width, this.height) || this._get(right) === n) {
-                block.style.borderBottomRightRadius = "0";
-                block.style.borderTopRightRadius = "0";
+            // 是否开启棋子连接特效的开关
+            if (this.animationSwitch.connect) {
+                // 连接生动效果
+                let up = point.up();
+                let down = point.down();
+                let left = point.left();
+                let right = point.right();
+                if (up.outOfBoard(this.width, this.height) || this._get(up) === n) {
+                    block.style.borderTopLeftRadius = "0";
+                    block.style.borderTopRightRadius = "0";
+                }
+                if (down.outOfBoard(this.width, this.height) || this._get(down) === n) {
+                    block.style.borderBottomLeftRadius = "0";
+                    block.style.borderBottomRightRadius = "0";
+                }
+                if (left.outOfBoard(this.width, this.height) || this._get(left) === n) {
+                    block.style.borderBottomLeftRadius = "0";
+                    block.style.borderTopLeftRadius = "0";
+                }
+                if (right.outOfBoard(this.width, this.height) || this._get(right) === n) {
+                    block.style.borderBottomRightRadius = "0";
+                    block.style.borderTopRightRadius = "0";
+                }
             }
         } else {
             block.classList.add(GameObject.eval(n));
